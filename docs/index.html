@@ -83,9 +83,19 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
 .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 800 18px/1 var(--font-display); letter-spacing: -0.01em; }
 .brand-mark { width: 28px; height: 28px; color: var(--green); flex: none; }
 .nav { margin-left: auto; display: flex; gap: 2px; }
-.nav a { padding: 7px 10px; border-radius: 6px; color: var(--ink-2); text-decoration: none; font-size: 14px; white-space: nowrap; }
+.nav a { padding: 7px 11px; border-radius: 8px; color: var(--ink-2); text-decoration: none; font-size: 14px; font-weight: 500; white-space: nowrap; }
 .nav a:hover { color: var(--ink); background: var(--sheet-2); }
-@media (max-width: 760px) { .nav { display: none; } }
+.nav a[aria-current="page"] { color: var(--navy); background: var(--blue-soft); font-weight: 700; }
+@media (max-width: 900px) {
+  html { scroll-padding-top: 112px; }
+  .topbar-in { flex-wrap: wrap; height: auto; padding-top: 10px; gap: 6px 16px; }
+  .nav { margin-left: -6px; width: calc(100% + 12px); overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 0 0 8px; }
+  .nav::-webkit-scrollbar { display: none; }
+}
+/* Pages: one view at a time */
+.view > section:first-child { border-top: 0; }
+.view:not(.home) > .section:first-child { padding-top: 40px; }
+#try { background: var(--band); }
 
 /* Buttons */
 .btn {
@@ -490,19 +500,19 @@ body.rv-open { overflow: hidden; }
       </svg>
       Mandate Guard
     </a>
-    <nav class="nav" aria-label="Sections">
-      <a href="#demo">Demo</a>
-      <a href="#steal">Steal ₹1</a>
-      <a href="#how">How it works</a>
-      <a href="#results">Results</a>
-      <a href="#try">Try it</a>
-      <a href="#plan">Plan</a>
-      <a href="#team" id="nav-team" hidden>Team</a>
+    <nav class="nav" aria-label="Pages">
+      <a href="#home" data-view="home">Overview</a>
+      <a href="#demo" data-view="demo">Guided demo</a>
+      <a href="#steal" data-view="steal">Steal ₹1</a>
+      <a href="#how" data-view="how">How it works</a>
+      <a href="#results" data-view="results">Results</a>
+      <a href="#plan" data-view="plan">Plan &amp; team</a>
     </nav>
   </div>
 </header>
 
 <main id="top">
+  <div class="view home" data-view="home">
   <section class="hero">
     <div class="wrap hero-in">
       <p class="eyebrow">GIFT FutureLab Grand Challenge 2026–27 · Agentic AI · Payments</p>
@@ -518,6 +528,16 @@ body.rv-open { overflow: hidden; }
     </div>
   </section>
 
+  <section class="section" id="why-now">
+    <div class="wrap">
+      <p class="eyebrow">Why now</p>
+      <h2>AI agents can already pay, and they are already being tricked</h2>
+      <ol class="facts" id="why-facts"></ol>
+    </div>
+  </section>
+  </div>
+
+  <div class="view" data-view="demo" hidden>
   <section class="demo" id="demo" aria-label="Guided demo">
     <div class="wrap">
       <div class="demo-head">
@@ -552,7 +572,9 @@ body.rv-open { overflow: hidden; }
       <p class="demo-note" id="demo-note"></p>
     </div>
   </section>
+  </div>
 
+  <div class="view" data-view="steal" hidden>
   <section class="section" id="steal" aria-label="Try to steal one rupee">
     <div class="wrap">
       <p class="eyebrow">Your turn</p>
@@ -578,7 +600,9 @@ body.rv-open { overflow: hidden; }
       <div class="score" id="st-score"></div>
     </div>
   </section>
+  </div>
 
+  <div class="view" data-view="how" hidden>
   <section class="section" id="how">
     <div class="wrap">
       <p class="eyebrow">How it works</p>
@@ -630,34 +654,6 @@ body.rv-open { overflow: hidden; }
     </div>
   </section>
 
-  <section class="section" id="results">
-    <div class="wrap">
-      <p class="eyebrow">Results</p>
-      <h2>Every out-of-limit payment stopped. No genuine purchase blocked.</h2>
-      <p class="intro" id="res-intro"></p>
-      <div class="kpis" id="res-kpis"></div>
-      <h3 class="sub-h">Every trick we tried</h3>
-      <div class="tbl-wrap">
-        <table class="tbl">
-          <thead><tr><th>Trick</th><th>Example</th><th class="num">Worked without Mandate Guard</th><th class="num">Worked with Mandate Guard</th><th class="num" id="th-llm" hidden>Fooled the real AI model (no guard)</th><th>What stopped it</th></tr></thead>
-          <tbody id="res-body"></tbody>
-        </table>
-      </div>
-      <div id="res-layers"></div>
-      <div class="grid2">
-        <div class="card">
-          <h3>Normal purchases</h3>
-          <div id="res-benign"></div>
-        </div>
-        <div class="card">
-          <h3>How we measured</h3>
-          <ul id="res-method"></ul>
-        </div>
-      </div>
-      <div id="res-llm"></div>
-    </div>
-  </section>
-
   <section class="section" id="try">
     <div class="wrap">
       <p class="eyebrow">Try it yourself</p>
@@ -689,7 +685,39 @@ body.rv-open { overflow: hidden; }
       </div>
     </div>
   </section>
+  </div>
 
+  <div class="view" data-view="results" hidden>
+  <section class="section" id="results">
+    <div class="wrap">
+      <p class="eyebrow">Results</p>
+      <h2>Every out-of-limit payment stopped. No genuine purchase blocked.</h2>
+      <p class="intro" id="res-intro"></p>
+      <div class="kpis" id="res-kpis"></div>
+      <h3 class="sub-h">Every trick we tried</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Trick</th><th>Example</th><th class="num">Worked without Mandate Guard</th><th class="num">Worked with Mandate Guard</th><th class="num" id="th-llm" hidden>Fooled the real AI model (no guard)</th><th>What stopped it</th></tr></thead>
+          <tbody id="res-body"></tbody>
+        </table>
+      </div>
+      <div id="res-layers"></div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Normal purchases</h3>
+          <div id="res-benign"></div>
+        </div>
+        <div class="card">
+          <h3>How we measured</h3>
+          <ul id="res-method"></ul>
+        </div>
+      </div>
+      <div id="res-llm"></div>
+    </div>
+  </section>
+  </div>
+
+  <div class="view" data-view="plan" hidden>
   <section class="section" id="why">
     <div class="wrap">
       <p class="eyebrow">Who it is for</p>
@@ -702,12 +730,10 @@ body.rv-open { overflow: hidden; }
         <article class="card"><h3>Merchants</h3><p>Real shops keep getting orders. Fake lookalike UPI IDs get nothing.</p></article>
         <article class="card"><h3>AI companies</h3><p>They can offer payments without promising their AI will never be fooled.</p></article>
       </div>
-      <h3 class="sub-h">Why now</h3>
-      <ol class="facts" id="why-facts"></ol>
     </div>
   </section>
 
-  <section class="section" id="plan">
+  <section class="section" id="roadmap">
     <div class="wrap">
       <p class="eyebrow">Plan</p>
       <h2>From prototype to pilot</h2>
@@ -738,6 +764,7 @@ body.rv-open { overflow: hidden; }
       <p class="muted" id="team-contact" style="margin-top:16px"></p>
     </div>
   </section>
+  </div>
 </main>
 
 <footer class="footer">
@@ -2271,10 +2298,43 @@ body.rv-open { overflow: hidden; }
     if (rvReturn && rvReturn.focus) rvReturn.focus();
     rvReturn = null;
   }
+  // Pages: one view at a time, chosen by the address (#demo, #steal, ...). Older links to sections still work.
+  const VIEWS = ['home', 'demo', 'steal', 'how', 'results', 'plan'];
+  const VIEW_TITLES = { home: 'Mandate Guard', demo: 'Guided demo', steal: 'Try to steal ₹1', how: 'How it works', results: 'Results', plan: 'Plan and team' };
+  const SECTION_VIEW = { top: 'home', 'why-now': 'home', try: 'how', why: 'plan', roadmap: 'plan', team: 'plan' };
+  let view = null;
+  function showView(name, anchor) {
+    if (VIEWS.indexOf(name) < 0) name = 'home';
+    const changed = view !== name;
+    if (changed) {
+      if (view === 'demo' && playing) setPlaying(false);
+      document.querySelectorAll('.view').forEach((v) => { v.hidden = v.dataset.view !== name; });
+      document.querySelectorAll('.nav a[data-view]').forEach((a) => {
+        if (a.dataset.view === name) a.setAttribute('aria-current', 'page');
+        else a.removeAttribute('aria-current');
+      });
+      // On a phone the page tabs scroll sideways: keep the current one in sight.
+      const nav = $('.nav');
+      const on = $('.nav a[aria-current="page"]');
+      if (nav && on && nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: on.offsetLeft - (nav.clientWidth - on.offsetWidth) / 2, behavior: 'instant' });
+      document.title = name === 'home' ? VIEW_TITLES.home : VIEW_TITLES[name] + ' · Mandate Guard';
+      view = name;
+    }
+    const target = anchor ? document.getElementById(anchor) : null;
+    if (target) target.scrollIntoView({ behavior: 'instant' });
+    else if (changed) window.scrollTo({ top: 0, behavior: 'instant' });
+  }
   function route() {
-    const h = location.hash;
-    if (h.indexOf('#r=') === 0) showReceipt(h.slice(3));
-    else hideReceipt();
+    const h = location.hash.slice(1);
+    if (h.indexOf('r=') === 0) {
+      if (!view) showView('home');
+      showReceipt(h.slice(2));
+      return;
+    }
+    hideReceipt();
+    if (!h || VIEWS.indexOf(h) >= 0) showView(h || 'home');
+    else if (SECTION_VIEW[h]) showView(SECTION_VIEW[h], SECTION_VIEW[h] === 'home' && h === 'top' ? null : h);
+    else showView('home');
   }
   function openReceipt(token) {
     rvReturn = document.activeElement;
@@ -2784,7 +2844,7 @@ body.rv-open { overflow: hidden; }
     p.querySelectorAll('[data-goex]').forEach((b) => {
       b.onclick = () => {
         setPlaying(false);
-        document.getElementById('steal').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+        location.hash = 'steal';
         const ex = document.querySelector(`#st-ex [data-ex="${b.dataset.goex}"]`);
         if (ex) ex.click();
       };
@@ -2902,13 +2962,13 @@ body.rv-open { overflow: hidden; }
   }
 
   $('#prev').onclick = () => go(idx - 1);
-  $('#next').onclick = () => { if (idx === STEPS.length - 1) { setPlaying(false); document.getElementById('steal').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); } else go(idx + 1); };
+  $('#next').onclick = () => { if (idx === STEPS.length - 1) { setPlaying(false); location.hash = 'steal'; } else go(idx + 1); };
   $('#play').onclick = () => { if (!playing && idx === STEPS.length - 1) go(0); setPlaying(!playing); };
   $('#restart').onclick = () => { go(0); };
   $('#chapters').onclick = (e) => { const b = e.target.closest('[data-ch]'); if (b) go(STEPS.findIndex((s) => s.ch === Number(b.dataset.ch))); };
   $('#progress').onclick = (e) => { const b = e.target.closest('[data-i]'); if (b) go(Number(b.dataset.i)); };
   $('#run-demo').onclick = () => {
-    document.getElementById('demo').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    if (view !== 'demo') location.hash = 'demo';
     go(0);
     setPlaying(true);
   };
@@ -2921,14 +2981,10 @@ body.rv-open { overflow: hidden; }
   };
   document.addEventListener('fullscreenchange', () => { fsBtn.textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; });
 
-  let demoVisible = false;
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver((entries) => { demoVisible = entries[0].isIntersecting; }, { threshold: 0.35 }).observe(document.getElementById('demo'));
-  }
   document.addEventListener('keydown', (e) => {
     if (e.target.closest && e.target.closest('input, select, textarea, [contenteditable]')) return;
     if (!$('#rv').hidden) return;
-    if (!demoVisible && !document.fullscreenElement) return;
+    if (view !== 'demo' && !document.fullscreenElement) return;
     if (e.key === 'ArrowRight') { e.preventDefault(); go(idx + 1); }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); go(idx - 1); }
     else if (e.key === ' ' && !(e.target.closest && e.target.closest('button, a'))) { e.preventDefault(); setPlaying(!playing); }
@@ -2996,7 +3052,6 @@ body.rv-open { overflow: hidden; }
     const team = (CFG.team || []).filter((m) => m && m.name);
     if (team.length) {
       $('#team').hidden = false;
-      $('#nav-team').hidden = false;
       if (CFG.team_name) $('#team-name').textContent = CFG.team_name;
       $('#team-grid').innerHTML = team.map((m) => `<article class="card"><h3>${esc(m.name)}</h3><p>${esc([m.role, m.institution].filter(Boolean).join(', '))}</p>${m.email ? `<p><a href="mailto:${esc(m.email)}">${esc(m.email)}</a></p>` : ''}</article>`).join('');
       if (CFG.contact_email) $('#team-contact').textContent = 'Contact: ' + CFG.contact_email;

@@ -69,7 +69,7 @@ test('Receipt: changing any part of it, or checking with another key, fails', as
     edit(7, '0'), // no failed checks
     edit(8, parts[8].replace(',1500,', ',50000,')), // the limit Yash approved
     edit(9, 'Somebody'), // the account holder
-    edit(10, parts[10].slice(0, -2) + (parts[10].endsWith('AA') ? 'AB' : 'AA')), // the signature
+    edit(10, parts[10].slice(0, 20) + (parts[10][20] === 'A' ? 'B' : 'A') + parts[10].slice(21)), // one character of the signature
   ];
   for (const f of fakes) {
     const v = await RC.verify(f, key.pub);

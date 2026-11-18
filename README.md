@@ -6,7 +6,7 @@ A safety layer that sits between an AI agent and UPI, inside the payment app or 
 
 Built for the **GIFT FutureLab Grand Challenge 2026–27** (theme: *From Technology to Trust*, focus area: Agentic AI).
 
-- **Live guided demo:** https://yashg1836.github.io/mandate-guard/ (press **Run the guided demo**). It also works offline: open [`docs/index.html`](docs/index.html) in any browser.
+- **Live demo site:** https://yashg1836.github.io/mandate-guard/ (press **Run the guided demo**). Each part has its own page: Overview, [Guided demo](https://yashg1836.github.io/mandate-guard/#demo), [Steal ₹1](https://yashg1836.github.io/mandate-guard/#steal), [How it works](https://yashg1836.github.io/mandate-guard/#how), [Results](https://yashg1836.github.io/mandate-guard/#results) and [Plan & team](https://yashg1836.github.io/mandate-guard/#plan). It also works offline: open [`docs/index.html`](docs/index.html) in any browser.
 - **Try to steal ₹1:** https://yashg1836.github.io/mandate-guard/#steal. Write any scam into a product review. The assistant believes every word; Mandate Guard still stops the money.
 - **Receipts you can scan:** every decision comes with a signed receipt and a QR code. Any phone camera opens it, and the phone checks the signature itself ([below](#signed-receipts-and-who-pays)).
 - **Results:** [`results/RESULTS.md`](results/RESULTS.md), and what spending limits alone would stop: [`results/COMPARISON.md`](results/COMPARISON.md)
