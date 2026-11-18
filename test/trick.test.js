@@ -62,7 +62,7 @@ test('Trick reader: understands hidden and encoded instructions', async () => {
   assert.equal(T.interpret('Pay ₹1,299 to voltkart@nimbus', ctx(w)).actions.length, 0, 'paying the real shop the real price is the genuine order');
 });
 
-test('Try to steal ₹1: every example fools the assistant, and Mandate Guard stops every one', async () => {
+test('Fake review: every example fools the assistant, and Mandate Guard stops every one', async () => {
   const w = await world();
   for (const [name, text, limitAloneMisses] of EXAMPLES) {
     const r = await T.play(text, w);
@@ -74,7 +74,7 @@ test('Try to steal ₹1: every example fools the assistant, and Mandate Guard st
   }
 });
 
-test('Try to steal ₹1: 300 random reviews, ₹0 stolen, and the real purchase always goes through', async () => {
+test('Fake review: 300 random reviews, ₹0 lost, and the real purchase always goes through', async () => {
   const w = await world();
   let seed = 20261118;
   const rand = (n) => {

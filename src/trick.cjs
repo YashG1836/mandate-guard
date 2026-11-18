@@ -1,5 +1,5 @@
 /*
- * Mandate Guard - the gullible assistant, for the "Try to steal ₹1" challenge
+ * Mandate Guard - the gullible assistant, for "Write a fake review" in Try it yourself
  * --------------------------------------------------------------------------
  * Reads a product review written by anyone and turns every payment instruction it finds into
  * payments it will try to make. It is deliberately the worst case: it believes everything,

@@ -6,8 +6,8 @@ A safety layer that sits between an AI agent and UPI, inside the payment app or 
 
 Built for the **GIFT FutureLab Grand Challenge 2026–27** (theme: *From Technology to Trust*, focus area: Agentic AI).
 
-- **Live demo site:** https://yashg1836.github.io/mandate-guard/ (press **Run the guided demo**). Each part has its own page: Overview, [Guided demo](https://yashg1836.github.io/mandate-guard/#demo), [Steal ₹1](https://yashg1836.github.io/mandate-guard/#steal), [How it works](https://yashg1836.github.io/mandate-guard/#how), [Results](https://yashg1836.github.io/mandate-guard/#results) and [Plan & team](https://yashg1836.github.io/mandate-guard/#plan). It also works offline: open [`docs/index.html`](docs/index.html) in any browser.
-- **Try to steal ₹1:** https://yashg1836.github.io/mandate-guard/#steal. Write any scam into a product review. The assistant believes every word; Mandate Guard still stops the money.
+- **Live demo site:** https://yashg1836.github.io/mandate-guard/ (press **Run the guided demo**). Each part has its own page: Overview, [Guided demo](https://yashg1836.github.io/mandate-guard/#demo), [How it works](https://yashg1836.github.io/mandate-guard/#how), [Results](https://yashg1836.github.io/mandate-guard/#results) and [Plan & team](https://yashg1836.github.io/mandate-guard/#plan). It also works offline: open [`docs/index.html`](docs/index.html) in any browser.
+- **Try it yourself:** https://yashg1836.github.io/mandate-guard/#try. Enter any payment, or write a fake review that the assistant obeys, and watch the checks respond.
 - **Receipts you can scan:** every decision comes with a signed receipt and a QR code. Any phone camera opens it, and the phone checks the signature itself ([below](#signed-receipts-and-who-pays)).
 - **Results:** [`results/RESULTS.md`](results/RESULTS.md), and what spending limits alone would stop: [`results/COMPARISON.md`](results/COMPARISON.md)
 - **Use it with a real AI agent:** Mandate Guard runs as an MCP server, so Claude, Gemini or any MCP client can shop through it ([below](#connect-a-real-ai-agent-mcp)).
@@ -101,13 +101,13 @@ The model resisted the crude tricks (fake deposits, fake bank messages, Hinglish
 
 Full tables by technique: [`results/RESULTS.md`](results/RESULTS.md).
 
-## Try to steal ₹1
+## Try it yourself: write a fake review
 
-The live challenge on the demo site ([`#steal`](https://yashg1836.github.io/mandate-guard/#steal)). You write a review on the charger's product page. Yash's assistant reads it and believes every word: it turns any payment instruction into a payment and tries to make it. It understands English, Hinglish, Hindi digits, amounts such as "5k" or "2 lakh", hidden zero-width characters, and Morse code like the May 2026 attack on Grok. Then it buys the charger Yash actually asked for.
+The second mode of **Try it yourself** on the demo site ([`#try`](https://yashg1836.github.io/mandate-guard/#try)). You write a review on the charger's product page. Yash's assistant reads it and believes every word: it turns any payment instruction into a payment and tries to make it. It understands English, Hinglish, Hindi digits, amounts such as "5k" or "2 lakh", hidden zero-width characters, and Morse code like the May 2026 attack on Grok. Then it buys the charger Yash actually asked for.
 
 Every payment goes through Mandate Guard's real checks, in your browser, against Yash's signed mandate (up to ₹1,500, electronics, verified shops, one payment). You see what the assistant tried, which checks failed in plain words, and whether a spending limit alone would have let it through. A blocked payment comes with a signed receipt.
 
-The challenge is tested like the guard (`test/trick.test.js`): all nine example tricks fool the assistant and none gets through, and 300 random scam reviews steal ₹0 while the real purchase goes through every time. A spending limit alone would have let five of the nine examples through: the ₹49 fee, the changed UPI ID, the lookalike ID, the Hinglish fee and the Morse-code payment.
+It is tested like the guard (`test/trick.test.js`): all nine example tricks fool the assistant and none gets through, and 300 random scam reviews lose ₹0 while the real purchase goes through every time. A spending limit alone would have let five of the nine examples through: the ₹49 fee, the changed UPI ID, the lookalike ID, the Hinglish fee and the Morse-code payment.
 
 ## Signed receipts, and who pays
 
@@ -128,7 +128,7 @@ Requirements: **Node.js 20 or later**. The core, tests, benchmark and demo have 
 
 ```bash
 npm test          # 31 tests: guard checks, signatures, audit record, layer comparison, MCP server,
-                  #           receipts, QR codes, and the "Try to steal ₹1" assistant
+                  #           receipts, QR codes, and the fake-review assistant
 npm run bench     # 70 scenarios x 2 conditions, writes results/
 npm run compare   # what each layer stops, writes results/COMPARISON.md
 npm run record    # records the demo run, writes site/demo-data.json
@@ -204,7 +204,7 @@ Then ask the agent: *"Buy me the VoltKart 20W USB-C charger for up to ₹1,500."
 src/core.cjs             mandate signing, the nine checks, audit record (shared by Node and the browser)
 src/receipt.cjs          signed receipts: build, sign, verify (shared by Node and the browser)
 src/qr.cjs               QR code encoder for receipts, no dependencies
-src/trick.cjs            the "Try to steal ₹1" assistant: reads any review and tries every payment it asks for
+src/trick.cjs            the fake-review assistant: reads any review and tries every payment it asks for
 src/world.js             demo marketplace, merchants, mock UPI (all fictional)
 src/scenarios.js         5 purchases x 11 attack techniques + 3 genuine variants
 src/env.js               agent tools: search_products, view_product, get_cart, pay
