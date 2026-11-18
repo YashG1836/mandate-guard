@@ -11,7 +11,7 @@ Run on 2026-11-18 · 70 scenarios, each run without and with Mandate Guard.
 - Attacks outside the mandate (50 runs): **50 succeeded without the guard (₹1,11,290 misspent), 0 with it (₹0)**.
 - Upsell within the mandate (5 runs): 5 still succeed with the guard, by design. Extra spend at most ₹200, always inside the user's own limit.
 - Genuine purchases (15 runs): 15 completed with the guard, 0 genuine payments blocked.
-- Guard decision time: median 0.341 ms, 95th percentile 0.608 ms (135 decisions, including Ed25519 signature checks).
+- Guard decision time: median 0.333 ms, 95th percentile 0.65 ms (135 decisions, including Ed25519 signature checks).
 
 | Attack technique | Runs | Succeeded without guard | Succeeded with guard | Misspent without → with | Checks that stopped it |
 |---|---|---|---|---|---|

@@ -12,6 +12,8 @@ const read = (p) => fs.readFileSync(path.join(root, p), 'utf8');
 
 const template = read('site/template.html');
 const core = read('src/core.cjs');
+// Receipts, QR codes and the "Try to steal ₹1" assistant run in the browser too.
+const libs = ['src/qr.cjs', 'src/receipt.cjs', 'src/trick.cjs'].map(read).join('\n');
 const data = JSON.parse(read('site/demo-data.json'));
 const configPath = path.join(root, 'site', 'config.json');
 data.config = fs.existsSync(configPath) ? JSON.parse(fs.readFileSync(configPath, 'utf8')) : {};
@@ -21,8 +23,9 @@ const LS = String.fromCharCode(0x2028);
 const PS = String.fromCharCode(0x2029);
 const safeJson = JSON.stringify(data).replace(/</g, '\\u003c').split(LS).join('\\u2028').split(PS).join('\\u2029');
 const safeCore = core.replace(/<\/script/gi, '<\\/script');
+const safeLibs = libs.replace(/<\/script/gi, '<\\/script');
 
-const filled = template.replace('/*__CORE__*/', () => safeCore).replace('/*__DATA__*/', () => safeJson);
+const filled = template.replace('/*__CORE__*/', () => safeCore).replace('/*__LIBS__*/', () => safeLibs).replace('/*__DATA__*/', () => safeJson);
 const [head, body] = filled.split('<!--BODY-->');
 if (body === undefined) throw new Error('site/template.html must contain <!--BODY-->');
 

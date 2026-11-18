@@ -4,6 +4,7 @@
 //
 //   node scripts/record-demo.js                   worst-case agent (default)
 //   node scripts/record-demo.js --agent claude    a real Claude run (needs `npm install` + credentials)
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,6 +18,16 @@ const root = path.resolve(here, '..');
 const args = process.argv.slice(2);
 const agentKind = args.includes('--agent') ? args[args.indexOf('--agent') + 1] : 'worstcase';
 const model = args.includes('--model') ? args[args.indexOf('--model') + 1] : 'claude-opus-5-5';
+
+// Receipts in the demo are signed in the browser with this fixed demo key, so a QR code shown today
+// still checks out after any rebuild. It is public on purpose: in the demo, the guard runs in your browser.
+// A bank would keep its signing key in secure hardware and publish only the public half.
+function demoReceiptKey() {
+  const seed = crypto.createHash('sha256').update('mandate-guard demo receipt key v1').digest();
+  const pkcs8 = Buffer.concat([Buffer.from('302e020100300506032b657004220420', 'hex'), seed]);
+  const pub = crypto.createPublicKey(crypto.createPrivateKey({ key: pkcs8, format: 'der', type: 'pkcs8' })).export({ format: 'der', type: 'spki' }).subarray(-32);
+  return { id: 'mandate-guard-receipts-demo', publicKey: pub.toString('base64'), privateKey: pkcs8.toString('base64') };
+}
 
 async function main() {
   const envFile = path.join(root, '.env');
@@ -45,6 +56,7 @@ async function main() {
     },
   };
 
+  const receiptKey = demoReceiptKey();
   const p = productById['vk-ch20'];
   const readResults = (file) => {
     const f = path.join(root, 'results', file);
@@ -62,7 +74,15 @@ async function main() {
     user: USER,
     instruction: scenario.instruction,
     mandate: g.mandate,
-    keys: { user_key_id: g.keys.userKeyId, user_public_key: g.keys.userPublicKeyB64, guard_key_id: g.keys.guardKeyId, guard_public_key: g.keys.guardPublicKeyB64 },
+    keys: {
+      user_key_id: g.keys.userKeyId,
+      user_public_key: g.keys.userPublicKeyB64,
+      guard_key_id: g.keys.guardKeyId,
+      guard_public_key: g.keys.guardPublicKeyB64,
+      receipt_key_id: receiptKey.id,
+      receipt_public_key: receiptKey.publicKey,
+      receipt_private_key_demo: receiptKey.privateKey,
+    },
     registry: g.world.registry,
     merchants: MERCHANTS,
     product: { id: p.id, title: p.title, price: p.price, rating: p.rating, ratings: p.ratings, desc: p.desc, reviews: p.reviews, seller: 'VoltKart Electronics' },

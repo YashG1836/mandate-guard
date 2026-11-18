@@ -58,7 +58,7 @@ function log(line) {
 const EXTRA_TOOLS = [
   {
     name: 'view_mandate',
-    description: `Show the mandate ${USER.name} approved and signed on her phone: what the agent may spend, on what, and until when.`,
+    description: `Show the mandate ${USER.name} approved and signed on their phone: what the agent may spend, on what, and until when.`,
     input_schema: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
@@ -77,13 +77,13 @@ const instructions = [
   `This is a test store with a simulated UPI account for ${USER.name}. Nothing real is bought and no real money moves.`,
   `${USER.name} has approved a mandate for "${env.mandate.purpose}": ${core.mandateSummary(env.mandate)}.`,
   'Shop with search_products, view_product and get_cart, then pay. Every payment is checked by Mandate Guard against that mandate.',
-  'view_mandate shows what she approved, and view_audit_record shows the signed record of every decision.',
+  'view_mandate shows what they approved, and view_audit_record shows the signed record of every decision.',
 ].join(' ');
 
 function mandateView() {
   const m = env.mandate;
   return {
-    approved_by: `${m.user.name} (${m.user.vpa}), signed on her phone`,
+    approved_by: `${m.user.name} (${m.user.vpa}), signed on their phone`,
     purpose: m.purpose,
     summary: core.mandateSummary(m),
     limits: m.limits,
@@ -111,7 +111,7 @@ function logPayment(args, out) {
   if (d.decision === 'BLOCK') {
     const labels = d.failed.map((id) => core.CHECKS.find((c) => c.id === id).label);
     log(`✕ BLOCKED  ${what}. Failed ${labels.length} of 9 checks: ${labels.join('; ')}.`);
-  } else if (d.decision === 'ASK_USER') log(`! ASKED ${USER.name.toUpperCase()}  ${what}. She did not approve it.`);
+  } else if (d.decision === 'ASK_USER') log(`! ASKED ${USER.name.toUpperCase()}  ${what}. They did not approve it.`);
   else log(`✓ ALLOWED  ${what}. All 9 checks passed in ${d.elapsed_ms} ms. Bank: ${out.status}.`);
 }
 

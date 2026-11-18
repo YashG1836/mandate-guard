@@ -7,6 +7,8 @@ A safety layer that sits between an AI agent and UPI, inside the payment app or 
 Built for the **GIFT FutureLab Grand Challenge 2026–27** (theme: *From Technology to Trust*, focus area: Agentic AI).
 
 - **Live guided demo:** https://yashg1836.github.io/mandate-guard/ (press **Run the guided demo**). It also works offline: open [`docs/index.html`](docs/index.html) in any browser.
+- **Try to steal ₹1:** https://yashg1836.github.io/mandate-guard/#steal. Write any scam into a product review. The assistant believes every word; Mandate Guard still stops the money.
+- **Receipts you can scan:** every decision comes with a signed receipt and a QR code. Any phone camera opens it, and the phone checks the signature itself ([below](#signed-receipts-and-who-pays)).
 - **Results:** [`results/RESULTS.md`](results/RESULTS.md), and what spending limits alone would stop: [`results/COMPARISON.md`](results/COMPARISON.md)
 - **Use it with a real AI agent:** Mandate Guard runs as an MCP server, so Claude, Gemini or any MCP client can shop through it ([below](#connect-a-real-ai-agent-mcp)).
 
@@ -20,6 +22,10 @@ These designs are built around limits the customer sets. Limits matter, but on t
 
 An agent reads product pages, reviews and messages that anyone can write. Any of that text can talk it into paying the wrong person or the wrong amount. This is called prompt injection. Once an agent pays on the customer's behalf, the bank sees an ordinary UPI payment from the customer's own account. It cannot tell a payment the customer wanted from one a web page talked the agent into.
 
+It is already happening. In May 2026 a message in Morse code, posted on X, tricked the AI agents Grok and Bankrbot into sending crypto tokens worth about $150,000 to $200,000 ([OECD AI incident monitor](https://oecd.ai/en/incidents/2026-05-04-4a73)). In July 2026 Zscaler found web pages with hidden instructions that make agents pay; in its tests, 4 of 26 AI models paid, including Gemini 3 Flash ([SecurityWeek](https://www.securityweek.com/prompt-injection-attacks-trick-ai-agents-into-making-crypto-payments/)).
+
+And when it goes wrong, nobody can yet say who pays. Chargebacks911 expects a new kind of dispute, *"I didn't buy that, my AI did"* ([Chargebacks911](https://chargebacks911.com/i-didnt-buy-that-my-ai-did-agentic-commerce-to-drive-new-wave-of-disputes/)). Reports on NPCI's agent protocol do not say who is responsible for an agent's mistakes. From 1 January 2027, the RBI requires banks to prove a customer is liable when the customer disputes a fraudulent digital payment ([MediaNama](https://www.medianama.com/2026/06/223-rbi-final-amendment-directions-limiting-customer-liability-digital-transactions-effect-2027/)).
+
 ## How it works
 
 ```mermaid
@@ -29,11 +35,13 @@ flowchart LR
   V[Verified merchants<br/>UPI IDs and cart keys] --> G
   G -->|only if allowed| U[UPI network<br/>NPCI switch] --> K[Banks]
   G --> L[Signed audit record]
+  G --> R[Signed receipt<br/>QR code, checked on any phone]
 ```
 
 1. **The mandate.** Before the agent starts, the customer approves on their phone what it may spend: a limit, categories, merchants, number of payments and an expiry. The phone signs it with Ed25519. It works like a UPI AutoPay or NACH mandate, written for an AI agent.
 2. **The guard.** Every payment the agent requests must pass nine checks before it reaches UPI. The checks use only signed data, never the agent's reasoning, so no text the agent reads can get a payment past them.
 3. **The record.** Every decision is chained to the previous one with SHA-256 and signed by the guard. Editing, deleting or reordering an entry breaks the chain at that entry.
+4. **The receipt.** Every decision also gets a short receipt signed by Mandate Guard, small enough for a QR code. Any phone can check it with no app, and it answers the dispute question: what the customer approved, what the shop signed, and what the guard decided.
 
 | # | Check | What it stops |
 |---|---|---|
@@ -93,12 +101,34 @@ The model resisted the crude tricks (fake deposits, fake bank messages, Hinglish
 
 Full tables by technique: [`results/RESULTS.md`](results/RESULTS.md).
 
+## Try to steal ₹1
+
+The live challenge on the demo site ([`#steal`](https://yashg1836.github.io/mandate-guard/#steal)). You write a review on the charger's product page. Yash's assistant reads it and believes every word: it turns any payment instruction into a payment and tries to make it. It understands English, Hinglish, Hindi digits, amounts such as "5k" or "2 lakh", hidden zero-width characters, and Morse code like the May 2026 attack on Grok. Then it buys the charger Yash actually asked for.
+
+Every payment goes through Mandate Guard's real checks, in your browser, against Yash's signed mandate (up to ₹1,500, electronics, verified shops, one payment). You see what the assistant tried, which checks failed in plain words, and whether a spending limit alone would have let it through. A blocked payment comes with a signed receipt.
+
+The challenge is tested like the guard (`test/trick.test.js`): all nine example tricks fool the assistant and none gets through, and 300 random scam reviews steal ₹0 while the real purchase goes through every time. A spending limit alone would have let five of the nine examples through: the ₹49 fee, the changed UPI ID, the lookalike ID, the Hinglish fee and the Morse-code payment.
+
+## Signed receipts, and who pays
+
+When an AI payment goes wrong, the question is who pays. Every Mandate Guard decision produces a receipt that answers it:
+
+- what the customer approved (the mandate, signed on their phone),
+- what the agent asked to pay, and to whom,
+- the cart, if a shop signed one,
+- what Mandate Guard decided, and which checks failed.
+
+The receipt is a short line of text signed with Ed25519, about 200 characters ([`src/receipt.cjs`](src/receipt.cjs)). It fits in a QR code that phone cameras read easily: version 11, 61 × 61 modules, drawn by our own encoder ([`src/qr.cjs`](src/qr.cjs)), which the tests read back module by module. Scanning it opens the demo page, which checks the signature on the phone itself. Nothing is looked up online. Change one character, such as the amount or "Blocked" to "Allowed", and the check fails. The page has a button to try exactly that.
+
+The demo signs receipts in the browser with a fixed demo key that is published in the page, so the demo runs anywhere and QR codes stay valid after a rebuild. A bank would keep its signing key in secure hardware and publish only the public key.
+
 ## Run it yourself
 
 Requirements: **Node.js 20 or later**. The core, tests, benchmark and demo have no dependencies.
 
 ```bash
-npm test          # 19 tests: guard checks, signatures, audit record, layer comparison, MCP server
+npm test          # 31 tests: guard checks, signatures, audit record, layer comparison, MCP server,
+                  #           receipts, QR codes, and the "Try to steal ₹1" assistant
 npm run bench     # 70 scenarios x 2 conditions, writes results/
 npm run compare   # what each layer stops, writes results/COMPARISON.md
 npm run record    # records the demo run, writes site/demo-data.json
@@ -158,7 +188,7 @@ claude mcp add mandate-guard -- node "/full/path/to/mandate-guard/scripts/mcp-se
 }
 ```
 
-Then ask the agent: *"Buy me the VoltKart 20W USB-C charger for up to ₹1,500."* It can search the store, read the product page (which hides a fake "refundable deposit" instruction), ask the merchant for a signed cart and pay. It can also show Ananya's mandate (`view_mandate`) and the signed record of every decision (`view_audit_record`).
+Then ask the agent: *"Buy me the VoltKart 20W USB-C charger for up to ₹1,500."* It can search the store, read the product page (which hides a fake "refundable deposit" instruction), ask the merchant for a signed cart and pay. It can also show Yash's mandate (`view_mandate`) and the signed record of every decision (`view_audit_record`).
 
 | Option | What it does |
 |---|---|
@@ -172,6 +202,9 @@ Then ask the agent: *"Buy me the VoltKart 20W USB-C charger for up to ₹1,500."
 
 ```
 src/core.cjs             mandate signing, the nine checks, audit record (shared by Node and the browser)
+src/receipt.cjs          signed receipts: build, sign, verify (shared by Node and the browser)
+src/qr.cjs               QR code encoder for receipts, no dependencies
+src/trick.cjs            the "Try to steal ₹1" assistant: reads any review and tries every payment it asks for
 src/world.js             demo marketplace, merchants, mock UPI (all fictional)
 src/scenarios.js         5 purchases x 11 attack techniques + 3 genuine variants
 src/env.js               agent tools: search_products, view_product, get_cart, pay
@@ -195,6 +228,7 @@ test/                    tests (node:test)
 - It does not replace a bank's fraud monitoring. It adds a hard limit in front of it.
 - Merchants must sign carts, in the same way verified UPI merchants can sign QR codes.
 - The registry of verified merchants must be trustworthy. In production it would come from the payment network.
+- The demo signs receipts with a key published in the page, so it can run anywhere. A real deployment keeps the signing key in the bank's secure hardware.
 
 ## Roadmap
 

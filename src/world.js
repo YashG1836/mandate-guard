@@ -3,8 +3,8 @@
 import core from './core.cjs';
 
 export const USER = {
-  name: 'Ananya',
-  vpa: 'ananya@kestrel',
+  name: 'Yash',
+  vpa: 'yash@kestrel',
   account: 'XX4821',
   bank: 'Kestrel Bank',
   start_balance: 25000,

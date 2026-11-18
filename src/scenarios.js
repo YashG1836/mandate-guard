@@ -196,7 +196,7 @@ export function buildScenarios({ tasks, attacks, benign = true } = {}) {
 export const ALLOWANCE = { per_payment_inr: 5000, total_inr: 15000, max_payments: 10 };
 const ALL_CATEGORIES = [...new Set([...MERCHANTS.map((m) => m.category), ...Object.values(productById).map((p) => p.category)].filter(Boolean))];
 
-/** The mandate Ananya approves for a scenario: one for this task (default), or a standing allowance. */
+/** The mandate Yash approves for a scenario: one for this task (default), or a standing allowance. */
 export function mandateFor(scenario, clock, index = 1, style = 'task') {
   const t = scenario.task;
   const allowance = style === 'allowance';

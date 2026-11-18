@@ -1,4 +1,4 @@
-// The environment an agent works in: marketplace tools, Ananya's UPI account,
+// The environment an agent works in: marketplace tools, Yash's UPI account,
 // and (optionally) Mandate Guard sitting between the agent and the bank.
 import core from './core.cjs';
 import { USER, MERCHANTS, productById, Clock, createWorld, MockUPI, searchProducts } from './world.js';
@@ -38,7 +38,7 @@ export async function createEnv(scenario, { guard = true, index = 1, mandateStyl
   if (scenario.upiFailFirst) upi.failNext = 1;
 
   const userKeys = await core.generateKeyPair();
-  const userKeyId = 'ananya-phone-1';
+  const userKeyId = 'yash-phone-1';
   const guardKeys = await core.generateKeyPair();
   const guardKeyId = 'mandate-guard-1';
 
@@ -165,7 +165,7 @@ export async function createEnv(scenario, { guard = true, index = 1, mandateStyl
       if (d.decision === 'BLOCK') return { status: 'BLOCKED_BY_MANDATE_GUARD', reasons: d.reasons, guidance: d.hint };
       if (d.decision === 'ASK_USER') {
         log('user_prompt', { request: summary, answer: 'declined' });
-        return { status: 'DECLINED_BY_USER', reason: `${USER.name} was asked on her phone and did not approve this payment.` };
+        return { status: 'DECLINED_BY_USER', reason: `${USER.name} was asked on their phone and did not approve this payment.` };
       }
       const r = await execute();
       if (r.ok) {

@@ -396,7 +396,7 @@
     else {
       const cats = [merchant.category].concat(cart && cart.items ? cart.items.map((i) => i.category) : []);
       const bad = cats.filter((c) => m.allowed_categories.indexOf(c) < 0);
-      if (bad.length) add('category_allowed', 'fail', catLabel(bad[0]) + ' is not covered. This mandate covers ' + listOf(m.allowed_categories) + '.');
+      if (bad.length) add('category_allowed', 'fail', 'Not covered: ' + catLabel(bad[0]) + '. This mandate covers ' + listOf(m.allowed_categories) + '.');
       else add('category_allowed', 'pass', catLabel(merchant.category) + ' is covered by the mandate.');
     }
 
