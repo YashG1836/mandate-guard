@@ -1,0 +1,19 @@
+{
+  "name": "mandate-guard",
+  "version": "1.0.0",
+  "description": "A safety layer that lets AI agents make UPI payments only within what the account holder approved.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "bench": "node scripts/bench.js",
+    "bench:claude": "node scripts/bench.js --agent claude",
+    "record": "node scripts/record-demo.js",
+    "build": "node scripts/build-site.js",
+    "all": "npm test && npm run bench && npm run record && npm run build",
+    "serve": "node scripts/serve.js"
+  }
+}

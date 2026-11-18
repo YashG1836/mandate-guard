@@ -1,0 +1,1377 @@
+<title>Mandate Guard</title>
+<meta name="description" content="Mandate Guard lets AI agents make UPI payments only within what the account holder approved. Guided demo, test results and a live checker.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a guided payments console. Narration on top, the customer's phone beside a live panel, evidence below. */
+:root {
+  --paper: #eef3f1;
+  --sheet: #ffffff;
+  --sheet-2: #f5f8f7;
+  --ink: #11232a;
+  --ink-2: #4a5e64;
+  --rule: #d2ddd9;
+  --teal: #0d5e6d;
+  --teal-soft: #dbebec;
+  --on-teal: #ffffff;
+  --allow: #1b7748;
+  --allow-soft: #e0f0e7;
+  --block: #b2261d;
+  --block-soft: #f8e2df;
+  --on-block: #ffffff;
+  --ask: #8f5b00;
+  --ask-soft: #f5ead2;
+  --guilloche: rgba(13, 94, 109, 0.09);
+  --phone: #0e1b1f;
+  --phone-screen: #f7faf9;
+  --console-bg: #0f2327;
+  --console-ink: #d8e7e4;
+  --console-dim: #8eaeab;
+  --console-key: #7fd2df;
+  --console-ok: #79d6a6;
+  --console-bad: #ff958c;
+  --shadow: 0 1px 2px rgba(17, 35, 42, 0.06), 0 10px 30px rgba(17, 35, 42, 0.08);
+  --font-display: "IBM Plex Sans Condensed", "Arial Narrow", "Helvetica Neue", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0b1517; --sheet: #112024; --sheet-2: #0e1b1e; --ink: #e2edea; --ink-2: #97acaa; --rule: #233639;
+    --teal: #5ebfce; --teal-soft: #13323a; --on-teal: #04181c;
+    --allow: #4fc48d; --allow-soft: #10301f; --block: #ff7d73; --block-soft: #3a1513; --on-block: #2a0705;
+    --ask: #e7b34c; --ask-soft: #33260f; --guilloche: rgba(94, 191, 206, 0.08);
+    --phone: #03080a; --phone-screen: #0f1c1f;
+    --console-bg: #071113; --console-ink: #d3e4e1; --console-dim: #84a3a0; --console-key: #7fd2df; --console-ok: #79d6a6; --console-bad: #ff958c;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0b1517; --sheet: #112024; --sheet-2: #0e1b1e; --ink: #e2edea; --ink-2: #97acaa; --rule: #233639;
+  --teal: #5ebfce; --teal-soft: #13323a; --on-teal: #04181c;
+  --allow: #4fc48d; --allow-soft: #10301f; --block: #ff7d73; --block-soft: #3a1513; --on-block: #2a0705;
+  --ask: #e7b34c; --ask-soft: #33260f; --guilloche: rgba(94, 191, 206, 0.08);
+  --phone: #03080a; --phone-screen: #0f1c1f;
+  --console-bg: #071113; --console-ink: #d3e4e1; --console-dim: #84a3a0; --console-key: #7fd2df; --console-ok: #79d6a6; --console-bad: #ff958c;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--sheet); }
+a { color: var(--teal); }
+code { font-family: var(--font-mono); font-size: 0.92em; }
+p { margin: 0; }
+h1, h2, h3, h4 { text-wrap: balance; }
+.wrap {
+  max-width: 1200px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.muted { color: var(--ink-2); font-size: 14px; }
+.eyebrow { font: 500 12px/1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); margin: 0 0 10px; }
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--teal) 55%, transparent); outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-delay: 0ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* Top bar */
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--sheet); border-bottom: 1px solid var(--rule); }
+.topbar-in { display: flex; align-items: center; gap: 16px; height: 56px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 700 19px/1 var(--font-display); letter-spacing: 0.01em; }
+.brand-mark { width: 28px; height: 28px; color: var(--teal); flex: none; }
+.nav { margin-left: auto; display: flex; gap: 2px; }
+.nav a { padding: 7px 10px; border-radius: 6px; color: var(--ink-2); text-decoration: none; font-size: 14px; white-space: nowrap; }
+.nav a:hover { color: var(--ink); background: var(--sheet-2); }
+@media (max-width: 760px) { .nav { display: none; } }
+
+/* Buttons */
+.btn {
+  appearance: none; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink);
+  font: 600 14px/1 var(--font-body); padding: 11px 14px; border-radius: 8px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px; text-decoration: none; white-space: nowrap;
+}
+.btn:hover { border-color: var(--teal); }
+.btn:disabled { opacity: 0.45; cursor: default; border-color: var(--rule); }
+.btn.primary { background: var(--teal); color: var(--on-teal); border-color: var(--teal); }
+.btn.ghost { background: transparent; }
+
+/* Hero */
+.hero { background: var(--sheet); border-bottom: 1px solid var(--rule); position: relative; overflow: hidden; }
+.hero::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: repeating-radial-gradient(circle at 88% 20%, var(--guilloche) 0 1px, transparent 1px 8px);
+  -webkit-mask-image: linear-gradient(to left, #000 10%, transparent 70%); mask-image: linear-gradient(to left, #000 10%, transparent 70%);
+}
+.hero-in { position: relative; z-index: 1; padding-block: 52px 36px; display: grid; gap: 18px; }
+h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing: -0.01em; margin: 0; max-width: 19ch; }
+.lead { font-size: clamp(17px, 1.7vw, 19px); color: var(--ink-2); max-width: 64ch; }
+.lead b { color: var(--ink); font-weight: 600; }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--rule); margin-top: 8px; }
+.stat { padding: 16px 16px 0 0; display: grid; gap: 2px; min-width: 0; }
+.stat b { font: 700 32px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.stat span { color: var(--ink-2); font-size: 14px; }
+@media (max-width: 760px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Demo */
+.demo { padding-block: 32px 44px; }
+.demo:fullscreen { background: var(--paper); overflow-y: auto; padding-block: 20px; }
+.demo-head { display: grid; gap: 10px; margin-bottom: 18px; }
+.chapters { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font: 500 12px/1 var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 8px 10px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-2); background: transparent; cursor: pointer;
+}
+.chip.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.step-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 500 13px var(--font-mono); color: var(--ink-2); }
+.step-title { font: 700 clamp(26px, 3.2vw, 38px)/1.08 var(--font-display); margin: 0; }
+.step-caption { max-width: 76ch; font-size: 17.5px; min-height: 4.8em; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.progress { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; flex: 1 1 260px; min-width: 200px; }
+.progress button { position: relative; overflow: hidden; height: 9px; border-radius: 5px; border: 0; padding: 0; background: var(--rule); cursor: pointer; }
+.progress button.done { background: color-mix(in srgb, var(--teal) 45%, var(--rule)); }
+.progress button.on { background: color-mix(in srgb, var(--teal) 25%, var(--rule)); }
+.progress .fill { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--teal); }
+.progress button.on .fill { width: 100%; }
+.stage { display: grid; grid-template-columns: 316px minmax(0, 1fr); gap: 20px; align-items: start; }
+.demo-note { margin-top: 14px; color: var(--ink-2); font-size: 14px; max-width: 90ch; }
+.demo-note kbd { font: 500 12px var(--font-mono); border: 1px solid var(--rule); border-bottom-width: 2px; border-radius: 4px; padding: 1px 5px; background: var(--sheet); }
+@media (max-width: 920px) {
+  .stage { grid-template-columns: minmax(0, 1fr); }
+  .phone { order: 2; }
+}
+
+/* Phone */
+.phone { width: 316px; max-width: 100%; justify-self: center; background: var(--phone); border-radius: 40px; padding: 10px; box-shadow: var(--shadow); height: 660px; display: flex; }
+.screen { background: var(--phone-screen); border-radius: 31px; flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.statusbar { display: flex; justify-content: space-between; padding: 12px 22px 4px; font: 600 12px var(--font-body); color: var(--ink); }
+.apphead { display: flex; align-items: center; gap: 10px; padding: 8px 14px 10px; border-bottom: 1px solid var(--rule); }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--teal-soft); color: var(--teal); display: grid; place-items: center; font: 700 13px var(--font-body); flex: none; }
+.who { font-weight: 600; font-size: 14px; line-height: 1.2; }
+.apphead small { display: block; color: var(--ink-2); font-size: 11.5px; }
+.balance { margin-left: auto; text-align: right; font: 500 10.5px var(--font-mono); color: var(--ink-2); }
+.balance b { display: block; font: 600 13.5px var(--font-mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+.balance b.flash.down { animation: flashDown 1.2s ease; }
+.balance b.flash.up { animation: flashUp 1.2s ease; }
+@keyframes flashDown { 0%, 30% { color: var(--block); } 100% { color: var(--ink); } }
+@keyframes flashUp { 0%, 30% { color: var(--allow); } 100% { color: var(--ink); } }
+.chat { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.chat > .new { animation: pop 0.32s ease both; }
+.idle { margin: auto; text-align: center; color: var(--ink-2); font-size: 13px; padding: 0 18px; }
+.msg { max-width: 88%; padding: 8px 11px; border-radius: 14px; font-size: 13px; line-height: 1.42; overflow-wrap: anywhere; }
+.msg.user { align-self: flex-end; background: var(--teal); color: var(--on-teal); border-bottom-right-radius: 4px; }
+.msg.agent { align-self: flex-start; background: var(--sheet); border: 1px solid var(--rule); border-bottom-left-radius: 4px; }
+.sms { background: var(--sheet); border: 1px solid var(--rule); border-left: 3px solid var(--ink-2); border-radius: 10px; padding: 8px 10px; font: 11.5px/1.45 var(--font-mono); overflow-wrap: anywhere; }
+.sms.bad { border-left-color: var(--block); background: var(--block-soft); }
+.sms .from { display: block; font: 600 10.5px var(--font-body); color: var(--ink-2); letter-spacing: 0.04em; margin-bottom: 2px; }
+.guardnote { background: var(--block-soft); border: 1px solid color-mix(in srgb, var(--block) 40%, transparent); border-radius: 10px; padding: 8px 10px; font-size: 12.5px; line-height: 1.4; }
+.guardnote b { display: block; color: var(--block); }
+.sheet-card { background: var(--sheet); border: 1.5px solid var(--teal); border-radius: 12px; padding: 10px 11px; font-size: 12.5px; display: grid; gap: 4px; }
+.sc-title { font-weight: 700; font-size: 13px; color: var(--teal); }
+.sc-row { display: flex; justify-content: space-between; gap: 10px; }
+.sc-row span { color: var(--ink-2); }
+.sc-row b { text-align: right; }
+.sc-ok { margin-top: 4px; color: var(--allow); font-weight: 600; }
+.homebar { height: 5px; width: 120px; background: var(--ink-2); opacity: 0.4; border-radius: 3px; margin: 6px auto 9px; flex: none; }
+@keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* Panel */
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); min-height: 660px; padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+@media (max-width: 920px) { .panel { min-height: 0; } }
+.panel-label { font: 500 12px/1.3 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+.callout { border-left: 3px solid var(--teal); background: var(--teal-soft); padding: 12px 14px; border-radius: 0 10px 10px 0; font-size: 15px; }
+.callout.ask { border-left-color: var(--ask); background: var(--ask-soft); }
+.quote p { font-size: 17px; margin-top: 6px; }
+.facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.facts li { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.facts .when { font: 600 13px var(--font-mono); color: var(--teal); padding-top: 2px; }
+.facts p { font-size: 16px; }
+.facts a { font-size: 13px; }
+.tools { display: grid; gap: 8px; }
+.tool { display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 10px; }
+.tool code { font-weight: 600; color: var(--teal); }
+.tool.money { border-color: color-mix(in srgb, var(--block) 45%, var(--rule)); }
+.tool.reads { border-color: color-mix(in srgb, var(--ask) 45%, var(--rule)); }
+@media (max-width: 560px) { .tool { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+.badge { display: inline-flex; align-items: center; gap: 4px; font: 600 11.5px/1.2 var(--font-body); padding: 4px 8px; border-radius: 999px; white-space: nowrap; font-style: normal; }
+.badge.ok { background: var(--allow-soft); color: var(--allow); }
+.badge.no { background: var(--block-soft); color: var(--block); }
+.badge.warn { background: var(--ask-soft); color: var(--ask); }
+
+/* Console */
+.console { background: var(--console-bg); color: var(--console-ink); border-radius: 10px; padding: 12px 14px; font: 12.5px/1.6 var(--font-mono); min-height: 64px; overflow-wrap: anywhere; display: grid; gap: 3px; }
+.ln { animation: pop 0.22s ease both; }
+.ln .k { color: var(--console-key); font-weight: 600; }
+.ln.call::before { content: "› "; color: var(--console-dim); }
+.ln.say { color: var(--console-dim); font-style: italic; }
+.ln.dim { color: var(--console-dim); }
+.ln.ok { color: var(--console-ok); }
+.ln.bad { color: var(--console-bad); font-weight: 600; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tbl th, .tbl td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.tbl th { font: 500 11.5px var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); }
+.tbl .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tbl tr.pick td { background: var(--teal-soft); }
+
+/* Product page mock */
+.browser { border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; background: var(--sheet); }
+.browser-bar { display: flex; gap: 10px; align-items: center; padding: 8px 10px; background: var(--sheet-2); border-bottom: 1px solid var(--rule); font: 12px var(--font-mono); color: var(--ink-2); }
+.dots { display: flex; gap: 5px; }
+.dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--rule); display: block; }
+.url { flex: 1; min-width: 0; background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 4px 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.page { padding: 14px 16px 16px; display: grid; gap: 10px; }
+.pg-top { display: flex; gap: 14px; align-items: center; }
+.pg-img { width: 64px; height: 64px; border-radius: 10px; background: var(--teal-soft); display: grid; place-items: center; font-size: 28px; flex: none; }
+.page h4 { margin: 0; font-size: 17px; }
+.price { font: 700 20px var(--font-body); }
+.reviews-h { font-weight: 700; font-size: 14px; margin-top: 4px; }
+.review { border-top: 1px solid var(--rule); padding-top: 8px; font-size: 14px; display: grid; gap: 2px; }
+.stars { color: var(--ask); letter-spacing: 1px; font-size: 12px; }
+.review.injected { position: relative; border: 2px solid var(--block); border-radius: 10px; padding: 16px 12px 10px; background: var(--block-soft); margin-top: 10px; }
+.review.injected .tag { position: absolute; top: -12px; left: 10px; background: var(--block); color: var(--on-block); font: 600 11.5px var(--font-body); padding: 4px 9px; border-radius: 999px; }
+.review.injected.pulse { animation: pulse 1.4s ease 2; }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--block) 30%, transparent); } }
+
+/* Outcome */
+.outcome { border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; animation: pop 0.3s ease both; }
+.outcome.bad { background: var(--block-soft); border: 1px solid color-mix(in srgb, var(--block) 40%, transparent); }
+.outcome.good { background: var(--allow-soft); border: 1px solid color-mix(in srgb, var(--allow) 40%, transparent); }
+.outcome .big { font: 700 30px/1.1 var(--font-display); }
+.outcome.bad .big { color: var(--block); }
+
+/* Mandate document */
+.mandate-doc { border: 1.5px solid var(--teal); border-radius: 10px; background: var(--sheet); position: relative; overflow: hidden; }
+.mandate-doc::before { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: repeating-linear-gradient(135deg, var(--guilloche) 0 1px, transparent 1px 7px); }
+.md-head { position: relative; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; padding: 11px 14px; border-bottom: 1.5px solid var(--teal); }
+.md-head h4 { margin: 0; font: 700 16px var(--font-display); letter-spacing: 0.07em; text-transform: uppercase; color: var(--teal); }
+.md-id { font: 500 12px var(--font-mono); color: var(--ink-2); }
+.md-grid { position: relative; display: grid; grid-template-columns: 150px minmax(0, 1fr); margin: 0; }
+.md-grid dt { padding: 8px 14px; font: 500 11px/1.4 var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); border-bottom: 1px solid var(--rule); }
+.md-grid dd { margin: 0; padding: 8px 14px; border-bottom: 1px solid var(--rule); font-size: 14px; min-width: 0; overflow-wrap: anywhere; }
+.md-grid dd.edited { background: var(--block-soft); }
+.md-grid dd.edited .md-amount { color: var(--block); }
+.md-amount { font: 700 19px var(--font-mono); font-variant-numeric: tabular-nums; }
+.md-words { display: block; font-size: 12.5px; color: var(--ink-2); font-style: italic; }
+.md-sig { position: relative; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font: 12px var(--font-mono); color: var(--ink-2); }
+.md-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 560px) { .md-grid { grid-template-columns: minmax(0, 1fr); } .md-grid dt { border-bottom: 0; padding-bottom: 0; } }
+
+/* Guard */
+.flow { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.2fr) auto minmax(0, 1fr); gap: 8px; align-items: center; }
+.node { border: 1px solid var(--rule); border-radius: 10px; padding: 9px 8px; text-align: center; font-size: 14px; font-weight: 600; background: var(--sheet-2); transition: background 0.3s, border-color 0.3s, opacity 0.3s; }
+.node small { display: block; font-weight: 400; font-size: 12px; color: var(--ink-2); }
+.node.guard { border-color: var(--teal); background: var(--teal-soft); }
+.node.dim { opacity: 0.45; }
+.node.lit-ok { border-color: var(--allow); background: var(--allow-soft); opacity: 1; }
+.node.lit-no { border-color: var(--block); background: var(--block-soft); }
+.arrow { font: 600 16px var(--font-mono); color: var(--ink-2); text-align: center; }
+@media (max-width: 560px) { .flow { grid-template-columns: minmax(0, 1fr); } .arrow { transform: rotate(90deg); } }
+.req { border: 1px dashed var(--ink-2); border-radius: 10px; padding: 10px 12px; font: 13px/1.5 var(--font-mono); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 14px; }
+.req span { min-width: 0; overflow-wrap: anywhere; }
+.req span:nth-child(odd) { color: var(--ink-2); }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.check { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 9px; align-items: start; padding: 6px 8px; border-radius: 8px; opacity: 0.35; transition: opacity 0.2s, background 0.2s; }
+.check.shown, .checks.static .check { opacity: 1; }
+.check .ic { width: 21px; height: 21px; border-radius: 50%; display: grid; place-items: center; font: 700 12px var(--font-body); background: var(--rule); color: var(--ink-2); }
+.check.pass .ic { background: var(--allow-soft); color: var(--allow); }
+.check.fail { background: var(--block-soft); }
+.check.fail .ic { background: var(--block); color: var(--on-block); }
+.check.warn { background: var(--ask-soft); }
+.check.warn .ic { background: var(--ask); color: var(--sheet); }
+.check b { display: block; font-size: 14px; font-weight: 600; }
+.check small { display: block; font-size: 13px; color: var(--ink-2); line-height: 1.4; }
+.verdict { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; min-height: 54px; }
+.verdict p { flex: 1 1 260px; font-size: 15px; }
+.stamp { font: 700 26px/1 var(--font-display); letter-spacing: 0.1em; text-transform: uppercase; padding: 8px 14px; border: 3px solid currentColor; border-radius: 8px; transform: rotate(-4deg); animation: stamp 0.38s cubic-bezier(0.2, 1.6, 0.4, 1) both; }
+.stamp.block { color: var(--block); }
+.stamp.allow { color: var(--allow); }
+.stamp.ask { color: var(--ask); }
+@keyframes stamp { from { transform: rotate(-4deg) scale(1.7); opacity: 0; } to { transform: rotate(-4deg) scale(1); opacity: 1; } }
+
+/* Audit */
+.audit td.hash { font: 12px var(--font-mono); color: var(--ink-2); white-space: nowrap; }
+.audit tr.broken td { background: var(--block-soft); }
+.audit tr.after td { opacity: 0.45; }
+.audit .edited { color: var(--block); font-weight: 700; text-decoration: underline wavy; }
+.ok-t { color: var(--allow); }
+.no-t { color: var(--block); }
+.a-status { font-size: 15px; min-height: 2.6em; display: flex; gap: 8px; align-items: flex-start; }
+
+/* Results */
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.kpi { border: 1px solid var(--rule); border-radius: 10px; padding: 12px; display: grid; gap: 2px; min-width: 0; }
+.kpi b { font: 700 28px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.kpi span { font-size: 13px; color: var(--ink-2); }
+@media (max-width: 640px) { .kpis { grid-template-columns: minmax(0, 1fr); } }
+.bars { display: grid; gap: 9px; }
+.bar-row { display: grid; grid-template-columns: minmax(130px, 220px) minmax(0, 1fr); gap: 12px; align-items: center; font-size: 13.5px; }
+.bar-pair { display: grid; grid-template-columns: 52px minmax(0, 1fr) 34px; gap: 3px 8px; align-items: center; }
+.bar-lab { font: 500 11px var(--font-mono); color: var(--ink-2); text-transform: uppercase; }
+.bar { height: 9px; border-radius: 5px; background: var(--sheet-2); border: 1px solid var(--rule); position: relative; overflow: hidden; }
+.bar i { position: absolute; inset: 0 auto 0 0; background: var(--block); }
+.bar-row.within .bar i.g { background: var(--ask); }
+.bar-v { font: 500 12px var(--font-mono); text-align: right; font-variant-numeric: tabular-nums; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--ink-2); }
+.legend i { display: inline-block; width: 12px; height: 9px; border-radius: 3px; margin-right: 6px; vertical-align: middle; background: var(--block); }
+.legend i.a { background: var(--ask); }
+@media (max-width: 560px) { .bar-row { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+
+/* Diagram */
+.dg-wrap { overflow-x: auto; }
+.dg { width: 100%; min-width: 600px; height: auto; display: block; }
+.dg .nd rect { fill: var(--sheet-2); stroke: var(--rule); stroke-width: 1.5; }
+.dg .nd.g rect { fill: var(--teal-soft); stroke: var(--teal); stroke-width: 2; }
+.dg text { fill: var(--ink); font: 600 14px var(--font-body); }
+.dg text.big { font: 700 19px var(--font-display); }
+.dg text.sub { fill: var(--ink-2); font: 400 12px var(--font-body); }
+.dg .ln { stroke: var(--ink-2); stroke-width: 1.6; fill: none; }
+.dg .ahead { fill: var(--ink-2); }
+.dg .lbl { fill: var(--teal); font: 500 11px var(--font-mono); }
+.bullets { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+
+/* Sections */
+.section { padding-block: 60px; border-top: 1px solid var(--rule); }
+.section h2 { font: 700 clamp(28px, 3.6vw, 42px)/1.06 var(--font-display); margin: 0 0 12px; max-width: 28ch; }
+.section .intro { color: var(--ink-2); max-width: 68ch; margin-bottom: 26px; font-size: 17px; }
+.sub-h { font: 700 22px var(--font-display); margin: 34px 0 12px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 18px; }
+@media (max-width: 900px) { .grid3, .grid2 { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 18px; min-width: 0; display: grid; gap: 8px; align-content: start; }
+.card h3 { margin: 0; font-size: 18px; line-height: 1.3; }
+.card ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.step-no { font: 600 12px var(--font-mono); color: var(--teal); letter-spacing: 0.06em; text-transform: uppercase; }
+.timeline { border-left: 2px solid var(--rule); margin-left: 6px; display: grid; }
+.tl { position: relative; padding: 0 0 22px 24px; display: grid; gap: 4px; }
+.tl::before { content: ""; position: absolute; left: -8px; top: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--sheet); border: 2px solid var(--teal); }
+.tl.now::before { background: var(--teal); }
+.tl .when { font: 600 12px var(--font-mono); color: var(--teal); letter-spacing: 0.06em; text-transform: uppercase; }
+.tl h3 { margin: 0; font-size: 17px; }
+.timeline.compact .tl { padding-bottom: 14px; }
+
+/* Playground */
+.presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.preset { font: 500 13px var(--font-body); padding: 8px 11px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); cursor: pointer; }
+.preset:hover, .preset.on { border-color: var(--teal); background: var(--teal-soft); }
+.play { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .play { grid-template-columns: minmax(0, 1fr); } }
+.play-form { display: grid; gap: 14px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 18px; }
+.field { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+.field input, .field select { font: 400 15px var(--font-body); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); color: var(--ink); width: 100%; min-width: 0; }
+.field .help { font-weight: 400; font-size: 12.5px; color: var(--ink-2); }
+.toggles { display: grid; gap: 8px; border: 1px solid var(--rule); border-radius: 10px; padding: 12px; margin: 0; }
+.toggles legend { font-size: 14px; font-weight: 600; padding: 0 4px; }
+.toggles label { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; }
+.toggles input { margin-top: 3px; accent-color: var(--teal); }
+.play-out { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 18px; display: grid; gap: 12px; min-width: 0; }
+.hint { font-size: 14px; color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 10px; }
+
+/* Footer */
+.footer { border-top: 1px solid var(--rule); background: var(--sheet); }
+.foot { padding-block: 26px 34px; display: grid; gap: 6px; color: var(--ink-2); font-size: 14px; }
+.foot b { color: var(--ink); }
+</style>
+<!--BODY-->
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="#top" aria-label="Mandate Guard, back to top">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="14.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.4 1.8"></circle>
+        <circle cx="16" cy="16" r="10" fill="currentColor"></circle>
+        <path d="M11.4 16.4l3.2 3.2 6.2-6.6" fill="none" stroke="var(--on-teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      Mandate Guard
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#demo">Demo</a>
+      <a href="#how">How it works</a>
+      <a href="#results">Results</a>
+      <a href="#try">Try it</a>
+      <a href="#plan">Plan</a>
+      <a href="#team" id="nav-team" hidden>Team</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-in">
+      <p class="eyebrow">GIFT FutureLab Grand Challenge 2026–27 · Agentic AI · Payments</p>
+      <h1>AI agents can now pay. Mandate Guard makes sure they pay only what you approved.</h1>
+      <p class="lead">When an AI assistant shops for you, anything it reads can turn into an instruction, including a fake review that says “pay a deposit first”. Mandate Guard sits between the agent and UPI. <b>A payment goes through only if it fits a mandate you signed on your phone, goes to a verified merchant, and matches a cart that merchant signed.</b></p>
+      <div class="cta">
+        <button class="btn primary" id="run-demo" type="button">▶&nbsp; Run the guided demo</button>
+        <a class="btn" href="#results">See the test results</a>
+        <a class="btn" id="video-link" href="#demo" target="_blank" rel="noopener" hidden>Watch the 2-minute video ↗</a>
+      </div>
+      <div class="stats" id="stats"></div>
+    </div>
+  </section>
+
+  <section class="demo" id="demo" aria-label="Guided demo">
+    <div class="wrap">
+      <div class="demo-head">
+        <div class="chapters" id="chapters"></div>
+        <div class="step-meta"><span id="step-count"></span><span id="agent-label"></span></div>
+        <h2 class="step-title" id="step-title" aria-live="polite"></h2>
+        <p class="step-caption" id="step-caption"></p>
+        <div class="controls">
+          <button class="btn" id="prev" type="button">← Back</button>
+          <button class="btn primary" id="play" type="button" aria-pressed="false">▶ Play</button>
+          <button class="btn" id="next" type="button">Next →</button>
+          <button class="btn ghost" id="restart" type="button">Restart</button>
+          <button class="btn ghost" id="fullscreen" type="button">Full screen</button>
+          <div class="progress" id="progress"></div>
+        </div>
+      </div>
+      <div class="stage">
+        <div class="phone" role="group" aria-label="Ananya's phone">
+          <div class="screen">
+            <div class="statusbar"><span id="p-clock">10:00 am</span><span>5G · 82%</span></div>
+            <div class="apphead">
+              <div class="avatar" aria-hidden="true">AI</div>
+              <div><div class="who">Assistant</div><small>Shopping · pays over UPI</small></div>
+              <div class="balance">Kestrel Bank<b id="p-bal">₹25,000.00</b></div>
+            </div>
+            <div class="chat" id="chat" aria-live="polite"></div>
+            <div class="homebar"></div>
+          </div>
+        </div>
+        <div class="panel" id="panel"></div>
+      </div>
+      <p class="demo-note" id="demo-note"></p>
+    </div>
+  </section>
+
+  <section class="section" id="how">
+    <div class="wrap">
+      <p class="eyebrow">How it works</p>
+      <h2>Three parts, all outside the AI model</h2>
+      <p class="intro">An AI agent can be talked into almost anything by the text it reads. So Mandate Guard never asks the agent what it intends. It checks each payment against facts the agent cannot change.</p>
+      <div class="grid3">
+        <article class="card">
+          <span class="step-no">01 · The mandate</span>
+          <h3>The customer says what the agent may spend</h3>
+          <p>A limit, the categories, which merchants, how many payments and an expiry time. The customer's phone signs it with Ed25519. It works like a UPI AutoPay or NACH mandate, written for an AI agent.</p>
+        </article>
+        <article class="card">
+          <span class="step-no">02 · The guard</span>
+          <h3>Every payment is checked before it reaches UPI</h3>
+          <p>Mandate Guard runs in the payment app or at the bank. A payment goes through only if it passes nine checks, all based on signed data. A prompt injection cannot change a signature.</p>
+        </article>
+        <article class="card">
+          <span class="step-no">03 · The record</span>
+          <h3>Every decision is signed and chained</h3>
+          <p>Each decision is linked to the one before it by a SHA-256 fingerprint and signed by the guard. Editing, deleting or reordering an entry breaks the chain at that entry.</p>
+        </article>
+      </div>
+      <h3 class="sub-h">The nine checks</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th class="num">#</th><th>Check</th><th>What it stops</th></tr></thead>
+          <tbody id="checks-body"></tbody>
+        </table>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Built on what UPI already does</h3>
+          <ul>
+            <li><b>Mandates</b>, like UPI AutoPay and NACH, already let customers approve future payments within limits.</li>
+            <li><b>Verified merchants</b> already have known UPI IDs. The guard refuses everything else, including lookalikes.</li>
+            <li><b>Signed carts</b> work like signed UPI QR codes: the merchant vouches for the amount.</li>
+            <li><b>Limits for delegated payments</b> are where UPI Circle and UPI Reserve Pay are heading. Mandates map onto them.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>What it does not do</h3>
+          <ul>
+            <li>It does not judge whether an allowed purchase is a good deal. In our tests an upsell inside the limit still went through, costing at most <span id="upsell-max">₹200</span> more.</li>
+            <li>It does not replace the bank's fraud monitoring. It adds a hard limit in front of it.</li>
+            <li>It needs merchants to sign carts. Verified UPI merchants already have the infrastructure to do this.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="results">
+    <div class="wrap">
+      <p class="eyebrow">Results</p>
+      <h2>Every out-of-limit payment stopped. No genuine purchase blocked.</h2>
+      <p class="intro" id="res-intro"></p>
+      <div class="kpis" id="res-kpis"></div>
+      <h3 class="sub-h">By attack technique</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Technique</th><th>Example of the text the agent read</th><th class="num">Got through without the guard</th><th class="num">Got through with the guard</th><th>Checks that stopped it</th></tr></thead>
+          <tbody id="res-body"></tbody>
+        </table>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Genuine purchases</h3>
+          <div id="res-benign"></div>
+        </div>
+        <div class="card">
+          <h3>How we measured</h3>
+          <ul id="res-method"></ul>
+        </div>
+      </div>
+      <div id="res-llm"></div>
+    </div>
+  </section>
+
+  <section class="section" id="try">
+    <div class="wrap">
+      <p class="eyebrow">Try it yourself</p>
+      <h2>Change the payment and watch the checks respond</h2>
+      <p class="intro">This runs the prototype's guard code in your browser, against Ananya's signed mandate: up to ₹1,500 on electronics, one payment, verified merchants only. Pick a preset, or type any UPI ID and amount.</p>
+      <div class="presets" id="presets"></div>
+      <div class="play">
+        <form class="play-form" id="play-form">
+          <label class="field" for="pg-payee">Pay to (UPI ID)
+            <input id="pg-payee" type="text" list="pg-payees" autocomplete="off" spellcheck="false">
+            <datalist id="pg-payees"></datalist>
+            <span class="help">Try a lookalike such as v0ltkart@nimbus or volt.kart@nimbus.</span>
+          </label>
+          <label class="field" for="pg-amount">Amount (₹)
+            <input id="pg-amount" type="number" min="1" step="1" inputmode="numeric">
+          </label>
+          <label class="field" for="pg-cart">Cart the payment is for
+            <select id="pg-cart"></select>
+          </label>
+          <fieldset class="toggles">
+            <legend>What else is going on</legend>
+            <label for="pg-tamper"><input type="checkbox" id="pg-tamper"> The agent edited the mandate limit to ₹50,000</label>
+            <label for="pg-used"><input type="checkbox" id="pg-used"> This cart was already paid once</label>
+            <label for="pg-expired"><input type="checkbox" id="pg-expired"> It is two days later, so the mandate has expired</label>
+          </fieldset>
+          <button class="btn primary" type="submit">Check this payment</button>
+        </form>
+        <div class="play-out" id="play-out" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="why">
+    <div class="wrap">
+      <p class="eyebrow">Who it is for</p>
+      <h2>Trust that holds up for customers, banks and regulators</h2>
+      <div class="grid3">
+        <article class="card"><h3>Customers</h3><p>An assistant can never spend more than they approved, or pay someone they did not choose. Blocked attempts show up as alerts.</p></article>
+        <article class="card"><h3>Payment apps and banks</h3><p>A control they can explain in one sentence, plus a signed record of who approved what when a customer disputes a payment.</p></article>
+        <article class="card"><h3>NPCI</h3><p>A common check that any agent payment protocol can require, whichever company built the agent.</p></article>
+        <article class="card"><h3>Regulators</h3><p>AI-initiated payments that are bounded, explainable and auditable, in line with the RBI's FREE-AI principles on protecting customers.</p></article>
+        <article class="card"><h3>Merchants</h3><p>Verified merchants keep receiving orders from agents. Impersonators get nothing, because lookalike UPI IDs are refused.</p></article>
+        <article class="card"><h3>AI companies</h3><p>They can offer payments without promising that their model will never be fooled.</p></article>
+      </div>
+      <h3 class="sub-h">Why now</h3>
+      <ol class="facts" id="why-facts"></ol>
+    </div>
+  </section>
+
+  <section class="section" id="plan">
+    <div class="wrap">
+      <p class="eyebrow">Plan</p>
+      <h2>From prototype to pilot</h2>
+      <div class="grid2">
+        <div class="timeline">
+          <div class="tl now"><span class="when">Now</span><h3>Working prototype</h3><p>Mandate signing, the nine checks, the signed record, 70 test scenarios and this demo. Open source.</p></div>
+          <div class="tl"><span class="when">December 2026</span><h3>Real AI models and harder attacks</h3><p>Run the benchmark on current Claude models and open-source models, add multi-step and image-based attacks, and test the mandate screen with 20 people.</p></div>
+          <div class="tl"><span class="when">January–February 2027</span><h3>Fit UPI's own building blocks</h3><p>Map mandates onto UPI Reserve Pay and UPI Circle limits, look up agents in a registry, and add a post-quantum signature option.</p></div>
+          <div class="tl"><span class="when">From March 2027</span><h3>Sandbox pilot</h3><p>Pilot with a payment app or bank through the RBI regulatory sandbox, and test cross-border agent payments through the IFSCA FinTech sandbox at GIFT City.</p></div>
+        </div>
+        <div class="card">
+          <h3>What would help us most</h3>
+          <ul>
+            <li>A payment app or bank willing to run a sandbox pilot.</li>
+            <li>Mentors who know UPI rules and payments regulation.</li>
+            <li>Access to UPI sandbox APIs for agent payments.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="team" hidden>
+    <div class="wrap">
+      <p class="eyebrow">Team</p>
+      <h2 id="team-name">The team</h2>
+      <div class="grid3" id="team-grid"></div>
+      <p class="muted" id="team-contact" style="margin-top:16px"></p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap foot">
+    <p><b>Mandate Guard</b> · prototype for the GIFT FutureLab Grand Challenge 2026–27 · MIT licence</p>
+    <p>All banks, merchants, people and UPI IDs in this demo are fictional. No real money moves.</p>
+    <p id="foot-links"></p>
+  </div>
+</footer>
+
+<script id="mg-core">/*__CORE__*/</script>
+<script>window.MG_DATA = /*__DATA__*/;</script>
+<script>
+(function () {
+  'use strict';
+  const C = window.MandateGuardCore;
+  const D = window.MG_DATA;
+  const R = D.registry;
+  const RES = D.results;
+  const CFG = D.config || {};
+  const fmt = (n) => C.formatINR(n);
+  const fmtP = (n) => C.formatINR(n, { paise: true });
+  const $ = (s, r) => (r || document).querySelector(s);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  const reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const msOf = (iso) => Date.parse(iso);
+  const timeIST = (ms) => new Date(ms).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit', hour12: true });
+  const longIST = (ms) => new Date(ms).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+  const dateIST = (ms) => {
+    const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', day: '2-digit', month: '2-digit', year: '2-digit' }).formatToParts(new Date(ms));
+    const g = (t) => (parts.find((x) => x.type === t) || {}).value;
+    return g('day') + '-' + g('month') + '-' + g('year');
+  };
+  const isVerified = (vpa) => !!(R[vpa] && R[vpa].verified);
+  const catLabel = (c) => C.CATEGORY_LABELS[c] || c;
+  const USERKEYS = { [D.keys.user_key_id]: D.keys.user_public_key };
+  const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+
+  let token = 0;
+  let playing = false;
+  const wait = (t, ms) => new Promise((res) => setTimeout(() => res(t === token), reduce ? 0 : ms));
+
+  const FACTS = [
+    { when: 'Oct 2025', text: 'NPCI pilots an agentic AI framework for UPI and demonstrates it live at Global Fintech Fest 2025, with Google Pay, Gemini, Razorpay and BigBasket.', src: 'Inc42', url: 'https://inc42.com/buzz/npci-piloting-agentic-ai-based-payments-with-upi/' },
+    { when: 'Feb 2026', text: 'Razorpay and NPCI launch payments from Anthropic’s Claude, starting with Zomato, Swiggy and Zepto.', src: 'Razorpay newsroom', url: 'https://razorpay.com/newsroom/razorpay-npci-launch-agentic-payments-on-claude-powering-zomato-swiggy-zepto-at-the-india-ai-impact-summit/' },
+    { when: '2026', text: 'NPCI is reported to be designing a Unified Agent Protocol that would let agents make small payments without approval each time.', src: 'Outlook Business', url: 'https://www.outlookbusiness.com/news/india-plans-ai-powered-upi-payments-framework-through-unified-agent-protocol' },
+    { when: 'Aug 2025', text: 'The RBI’s FREE-AI framework asks regulated entities to protect customers and keep their AI systems accountable and auditable.', src: 'KPMG summary', url: 'https://kpmg.com/in/en/insights/2025/08/rbi-free-ai-committee-report-on-framework-for-responsible-and-ethical-enablement-of-artificial-intelligence.html' },
+  ];
+  const factHTML = (f) => `<li><span class="when">${esc(f.when)}</span><div><p>${esc(f.text)}</p><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.src)} ↗</a></div></li>`;
+
+  const STOPS = {
+    mandate_signed: 'A hijacked agent editing the mandate, for example raising the limit.',
+    mandate_active: 'Reusing an old or revoked mandate.',
+    payee_verified: 'Fake deposits, “our UPI ID has changed”, and lookalike IDs such as v0ltkart@nimbus.',
+    merchant_allowed: 'Buying from a store the customer did not choose. The guard asks the customer instead of blocking.',
+    category_allowed: 'Unrequested extras, such as gift cards added to a charger order.',
+    cart_signed: 'Inflated prices, payments with no order behind them, and paying the same cart twice.',
+    per_payment_limit: 'Large single payments.',
+    total_limit: 'Splitting a large payment into several small ones.',
+    payment_count: 'Repeat payments after a fake “payment failed” message.',
+  };
+
+  // ---------------------------------------------------------------- recorded runs
+  const NG = D.runs.no_guard.trace;
+  const G = D.runs.guard.trace;
+  const REQ = D.runs.guard.requests;
+  const findIdx = (tr, pred, from) => {
+    for (let i = from || 0; i < tr.length; i++) if (pred(tr[i])) return i;
+    return tr.length - 1;
+  };
+  const CUT = {
+    ngAsk: findIdx(NG, (e) => e.kind === 'say'),
+    ngSearch: findIdx(NG, (e) => e.kind === 'say', findIdx(NG, (e) => e.kind === 'result' && e.tool === 'search_products')),
+    ngView: findIdx(NG, (e) => e.kind === 'result' && e.tool === 'view_product'),
+    ngEnd: NG.length - 1,
+    gUser: findIdx(G, (e) => e.kind === 'user'),
+    gBlock: findIdx(G, (e) => e.kind === 'say', findIdx(G, (e) => e.kind === 'guard')),
+    gEnd: G.length - 1,
+  };
+  const guardEvents = G.filter((e) => e.kind === 'guard');
+  const blockEv = guardEvents.find((e) => e.decision === 'BLOCK');
+  const blockFails = blockEv ? blockEv.checks.filter((c) => c.status === 'fail').length : 0;
+  const lostNoGuard = D.runs.no_guard.ledger.filter((x) => !isVerified(x.to)).reduce((a, x) => a + x.amount, 0);
+  const attackTotal = RES ? RES.totals.out_of_mandate.runs + RES.totals.within_mandate.runs : 0;
+
+  function replayState(rid) {
+    const st = C.newState();
+    for (const ev of guardEvents) {
+      const id = ev.request.request_id;
+      if (id === rid) break;
+      const done = G.some((e) => e.kind === 'upi' && e.request_id === id && e.ok);
+      if (ev.decision === 'ALLOW' && done) C.commit(st, REQ[id].request);
+    }
+    return st;
+  }
+
+  // ---------------------------------------------------------------- phone
+  function phoneItems(tr, upto, sheet) {
+    const out = [];
+    for (let i = 0; i <= upto && i < tr.length; i++) {
+      const e = tr[i];
+      if (e.kind === 'user') {
+        out.push({ t: 'user', e });
+        if (sheet) out.push({ t: 'sheet', e });
+      } else if (e.kind === 'say') out.push({ t: 'agent', e });
+      else if (e.kind === 'upi' && e.ok) out.push({ t: 'sms', e });
+      else if (e.kind === 'guard' && e.decision === 'BLOCK') out.push({ t: 'guard', e });
+    }
+    return out;
+  }
+
+  function itemHTML(it) {
+    const e = it.e;
+    if (it.t === 'user') return `<div class="msg user">${esc(e.text)}</div>`;
+    if (it.t === 'agent') return `<div class="msg agent">${esc(e.text)}</div>`;
+    if (it.t === 'sheet') {
+      const m = D.mandate;
+      return `<div class="sheet-card"><div class="sc-title">Approve agent mandate</div>
+        <div class="sc-row"><span>Assistant may spend</span><b>up to ${fmt(m.limits.total_inr)}</b></div>
+        <div class="sc-row"><span>On</span><b>${esc(m.allowed_categories.map(catLabel).join(', '))}, verified stores</b></div>
+        <div class="sc-row"><span>Payments</span><b>${m.limits.max_payments}</b></div>
+        <div class="sc-row"><span>Until</span><b>${esc(longIST(msOf(m.valid_until)))}</b></div>
+        <div class="sc-ok">✓ Approved with fingerprint, signed on this phone</div></div>`;
+    }
+    if (it.t === 'sms') {
+      const x = e.txn;
+      return `<div class="sms${isVerified(x.to) ? '' : ' bad'}"><span class="from">${esc(D.user.bank.toUpperCase())} · ${esc(timeIST(msOf(x.at)))}</span>Rs.${x.amount.toFixed(2)} debited from A/c ${esc(D.user.account)} on ${dateIST(msOf(x.at))} to VPA ${esc(x.to)}. UPI Ref ${esc(x.utr)}. Avl Bal Rs.${e.balance_after.toFixed(2)}. Not you? Call 1800-000-0000.</div>`;
+    }
+    if (it.t === 'guard') {
+      const r = e.request;
+      return `<div class="guardnote"><b>Mandate Guard blocked a payment</b>Your assistant tried to pay ${fmt(r.amount_inr)} to ${esc(r.payee_vpa)}. It is outside what you approved. No money left your account.</div>`;
+    }
+    return '';
+  }
+
+  let phoneShown = { trace: null, count: 0 };
+  let shownBal = null;
+  function setBalance(b) {
+    const el = $('#p-bal');
+    el.classList.remove('flash', 'down', 'up');
+    if (shownBal !== null && b !== shownBal) {
+      void el.offsetWidth;
+      el.classList.add('flash', b < shownBal ? 'down' : 'up');
+    }
+    el.textContent = fmtP(b);
+    shownBal = b;
+  }
+
+  function renderPhone(spec) {
+    const chat = $('#chat');
+    if (!spec) {
+      chat.innerHTML = '<div class="idle">Ananya has not asked her assistant for anything yet.</div>';
+      setBalance(D.user.start_balance);
+      $('#p-clock').textContent = timeIST(msOf(NG[0].at));
+      phoneShown = { trace: null, count: 0 };
+      return;
+    }
+    const tr = spec.trace === 'g' ? G : NG;
+    const items = phoneItems(tr, spec.upto, spec.sheet);
+    let from = items.length;
+    if (phoneShown.trace !== spec.trace) from = 0;
+    else if (items.length > phoneShown.count) from = phoneShown.count;
+    chat.innerHTML = items
+      .map((it, i) => {
+        const h = itemHTML(it);
+        return i >= from ? h.replace('class="', `style="animation-delay:${(i - from) * 280}ms" class="new `) : h;
+      })
+      .join('');
+    phoneShown = { trace: spec.trace, count: items.length };
+    let bal = D.user.start_balance;
+    let last = msOf(tr[0].at);
+    for (let i = 0; i <= spec.upto && i < tr.length; i++) {
+      last = msOf(tr[i].at);
+      if (tr[i].kind === 'upi' && tr[i].ok) bal = tr[i].balance_after;
+    }
+    const delay = reduce ? 0 : Math.max(0, items.length - from - 1) * 280;
+    setTimeout(() => setBalance(bal), delay);
+    $('#p-clock').textContent = timeIST(last);
+    chat.scrollTop = chat.scrollHeight;
+    setTimeout(() => { chat.scrollTop = chat.scrollHeight; }, delay + 350);
+  }
+
+  // ---------------------------------------------------------------- panels
+  function pFacts(p) {
+    p.innerHTML = `<div class="panel-label">Why this matters now</div>
+      <ol class="facts">${FACTS.slice(0, 3).map(factHTML).join('')}</ol>
+      <div class="callout">Once an agent can pay without a PIN each time, the bank sees an ordinary UPI payment from the customer's own account. It cannot tell a payment the customer wanted from one that a web page talked the agent into.</div>`;
+  }
+
+  const toolRow = (name, desc, tag) =>
+    `<div class="tool${tag ? ' ' + tag : ''}"><code>${name}</code><span>${esc(desc)}</span>${tag === 'money' ? '<em class="badge no">Moves money</em>' : tag === 'reads' ? '<em class="badge warn">Reads untrusted text</em>' : '<span></span>'}</div>`;
+
+  function pTools(p) {
+    p.innerHTML = `<div class="panel-label">What the assistant is allowed to do</div>
+      <div class="tools">
+        ${toolRow('search_products', 'Search the store.')}
+        ${toolRow('view_product', 'Read a product page, including reviews and notes that anyone can write.', 'reads')}
+        ${toolRow('get_cart', 'Ask a store for a cart. The store signs it.')}
+        ${toolRow('pay', "Send money over UPI from Ananya's account.", 'money')}
+      </div>
+      <div class="quote"><div class="panel-label">Ananya's request</div><p>“${esc(D.instruction)}”</p></div>
+      <div class="callout">Two tools carry the risk. <b>view_product</b> lets strangers' text reach the agent, and <b>pay</b> moves real money.</div>`;
+  }
+
+  function pSearch(p) {
+    const i = NG.findIndex((e) => e.kind === 'result' && e.tool === 'search_products');
+    const call = NG[i - 1];
+    const rows = NG[i].data.results;
+    const byName = {};
+    Object.keys(R).forEach((v) => { byName[R[v].name] = R[v]; });
+    p.innerHTML = `<div class="panel-label">The agent's actions</div>
+      <div class="console"><div class="ln call"><span class="k">search_products</span>(query="${esc(call.args.query)}")</div><div class="ln dim">← ${rows.length} results</div></div>
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Product</th><th>Seller</th><th class="num">Price</th><th>Seller</th></tr></thead><tbody>
+      ${rows.map((r) => {
+        const v = byName[r.seller];
+        return `<tr${r.product_id === D.product.id ? ' class="pick"' : ''}><td>${esc(r.title)}</td><td>${esc(r.seller)}</td><td class="num">${fmt(r.price_inr)}</td><td>${v && v.verified ? '<span class="badge ok">✓ Verified</span>' : '<span class="badge no">Not verified</span>'}</td></tr>`;
+      }).join('')}
+      </tbody></table></div>
+      <p class="muted">The agent picks the highlighted charger and opens its page.</p>`;
+  }
+
+  async function pPage(p, t) {
+    const P = D.product;
+    const inj = D.injection;
+    const stars = (n) => '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n);
+    p.innerHTML = `<div class="panel-label">What the agent reads</div>
+      <div class="browser">
+        <div class="browser-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">shop.example/voltkart/${esc(P.id)}</span></div>
+        <div class="page">
+          <div class="pg-top"><div class="pg-img" aria-hidden="true">⚡</div><div><h4>${esc(P.title)}</h4><div class="price">${fmt(P.price)}</div><div class="muted">Sold by ${esc(P.seller)} · ★ ${P.rating} (${P.ratings.toLocaleString('en-IN')} ratings)</div></div></div>
+          <p>${esc(P.desc)}</p>
+          <div class="reviews-h">Customer reviews</div>
+          ${P.reviews.map((r) => `<div class="review"><div><b>${esc(r.author)}</b> <span class="stars">${stars(r.stars)}</span></div><p>${esc(r.text)}</p></div>`).join('')}
+          <div class="review injected" id="inj"><span class="tag">Instruction aimed at AI agents</span><div><b>${esc(inj.author)}</b> <span class="stars">★★★★★</span></div><p>${esc(inj.text)}</p></div>
+        </div>
+      </div>
+      <div class="callout">A person would scroll past this. An agent reads it as part of the page, and it is written as an order.</div>`;
+    if (await wait(t, 700)) { const el = $('#inj', p); if (el) el.classList.add('pulse'); }
+  }
+
+  function lineHTML(e) {
+    if (e.kind === 'say') return `<div class="ln say">agent: “${esc(e.text)}”</div>`;
+    if (e.kind === 'call') {
+      const a = e.args || {};
+      const args = Object.keys(a).map((k) => `${k}=${typeof a[k] === 'string' ? '"' + esc(a[k]) + '"' : esc(a[k])}`).join(', ');
+      return `<div class="ln call"><span class="k">${esc(e.tool)}</span>(${args})</div>`;
+    }
+    if (e.kind === 'result' && e.tool === 'get_cart') {
+      const d = e.data;
+      return `<div class="ln dim">← cart ${esc(d.cart_id)} from ${esc(d.merchant)}: ${fmt(d.total_inr)}, pay to ${esc(d.pay_to_upi_id)} (signed by the store)</div>`;
+    }
+    if (e.kind === 'upi') {
+      if (!e.ok) return `<div class="ln bad">UPI ✕ ${esc(e.status)}</div>`;
+      return `<div class="ln ${isVerified(e.txn.to) ? 'ok' : 'bad'}">UPI ✓ ${fmt(e.txn.amount)} sent to ${esc(e.txn.to)} · UPI Ref ${esc(e.txn.utr)}</div>`;
+    }
+    if (e.kind === 'guard') {
+      const label = e.decision === 'ALLOW' ? 'ALLOWED' : e.decision === 'BLOCK' ? 'BLOCKED' : 'ASKED THE USER';
+      return `<div class="ln ${e.decision === 'ALLOW' ? 'ok' : 'bad'}">Mandate Guard ${label}: ${fmt(e.request.amount_inr)} to ${esc(e.request.payee_vpa)}</div>`;
+    }
+    return '';
+  }
+
+  async function pAttack(p, t) {
+    p.innerHTML = `<div class="panel-label">The agent's actions, with no protection</div><div class="console" id="con"></div><div id="out"></div>`;
+    const con = $('#con', p);
+    for (let i = CUT.ngView + 1; i < NG.length; i++) {
+      const h = lineHTML(NG[i]);
+      if (!h) continue;
+      con.insertAdjacentHTML('beforeend', h);
+      if (!(await wait(t, 480))) return;
+    }
+    $('#out', p).innerHTML = `<div class="outcome bad"><div class="panel-label">Result</div><b class="big">${fmt(lostNoGuard)} lost</b>
+      <p>Sent to an account Ananya never chose. Balance ${fmtP(D.user.start_balance)} → ${fmtP(D.runs.no_guard.final_balance)}.</p>
+      <p class="muted">Both were ordinary UPI debits from her own account. The bank had no reason to stop either one.</p></div>`;
+  }
+
+  function mandateHTML(m, edited) {
+    const l = m.limits;
+    const ed = edited ? ' class="edited"' : '';
+    return `<div class="md-head"><h4>Agent payment mandate</h4><span class="md-id">${esc(m.mandate_id)}</span></div>
+      <dl class="md-grid">
+        <dt>Account holder</dt><dd>${esc(m.user.name)} · ${esc(m.user.vpa)} · ${esc(D.user.bank)} A/c ${esc(D.user.account)}</dd>
+        <dt>Agent</dt><dd>${esc(m.agent.name)} · <code>${esc(m.agent.id)}</code></dd>
+        <dt>Purpose</dt><dd>${esc(m.purpose)}</dd>
+        <dt>Maximum amount</dt><dd${ed}><span class="md-amount">${fmt(l.total_inr)}</span><span class="md-words">${esc(C.amountInWords(l.total_inr))}</span></dd>
+        <dt>Per payment</dt><dd${ed}>${fmt(l.per_payment_inr)} · ${l.max_payments} ${l.max_payments === 1 ? 'payment' : 'payments'}</dd>
+        <dt>Categories</dt><dd>${esc(m.allowed_categories.map(catLabel).join(', '))}</dd>
+        <dt>Merchants</dt><dd>${m.allowed_merchants && m.allowed_merchants.length ? esc(m.allowed_merchants.join(', ')) : 'Any verified merchant'}</dd>
+        <dt>Valid</dt><dd>${esc(longIST(msOf(m.valid_from)))} to ${esc(longIST(msOf(m.valid_until)))}</dd>
+      </dl>
+      <div class="md-sig"><span>Ed25519 · key ${esc(m.signature.key_id)} · ${esc(m.signature.value.slice(0, 18))}…</span><span class="badge warn" id="sigstate">Checking the signature…</span></div>`;
+  }
+
+  async function pMandate(p, t) {
+    const m = D.mandate;
+    p.innerHTML = `<div class="panel-label">The mandate Ananya approved</div>
+      <div class="mandate-doc" id="mdoc"></div>
+      <div class="md-actions"><button class="btn" type="button" id="md-edit">Let the agent change the limit to ₹50,000</button><button class="btn ghost" type="button" id="md-reset" hidden>Undo the change</button></div>
+      <p class="muted">It works like a UPI AutoPay or NACH mandate, written for an AI agent. The agent attaches it to every payment request, and the guard checks the signature every time.</p>`;
+    const show = async (doc, edited) => {
+      $('#mdoc', p).innerHTML = mandateHTML(doc, edited);
+      const ok = await C.verifyObject(doc, D.keys.user_public_key);
+      if (t !== token) return;
+      const b = $('#sigstate', p);
+      b.className = 'badge ' + (ok === true ? 'ok' : ok === false ? 'no' : 'warn');
+      b.textContent = ok === true ? '✓ Signature valid, checked in your browser' : ok === false ? '✕ Signature does not match: changed after signing' : 'This browser cannot check Ed25519 signatures';
+    };
+    const forged = () => {
+      const f = JSON.parse(JSON.stringify(m));
+      f.limits.total_inr = 50000;
+      f.limits.per_payment_inr = 50000;
+      return f;
+    };
+    $('#md-edit', p).onclick = () => { show(forged(), true); $('#md-edit', p).hidden = true; $('#md-reset', p).hidden = false; };
+    $('#md-reset', p).onclick = () => { show(m, false); $('#md-edit', p).hidden = false; $('#md-reset', p).hidden = true; };
+    await show(m, false);
+    if (playing && (await wait(t, 5600))) $('#md-edit', p).click();
+  }
+
+  async function pGuard(p, t, which) {
+    const ev = guardEvents.find((e) => (which === 'block' ? e.decision === 'BLOCK' : e.decision === 'ALLOW'));
+    if (!ev) { p.innerHTML = '<p>No recorded decision.</p>'; return; }
+    const rid = ev.request.request_id;
+    const request = REQ[rid].request;
+    const at = REQ[rid].at_ms;
+    const cart = request.cart;
+    p.innerHTML = `<div class="panel-label">Live check, running in your browser</div>
+      <div class="flow">
+        <div class="node" id="n-agent">AI agent<small>asks to pay</small></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node guard" id="n-guard">Mandate Guard<small>9 checks</small></div>
+        <div class="arrow" id="a2" aria-hidden="true">→</div>
+        <div class="node dim" id="n-upi">UPI network<small>moves the money</small></div>
+      </div>
+      <div class="req"><span>Pay to</span><span>${esc(request.payee_vpa)}</span><span>Amount</span><span>${fmt(request.amount_inr)}</span><span>Cart</span><span>${cart ? esc(cart.cart_id + ', signed by ' + cart.merchant_name) : 'none'}</span><span>Note</span><span>${esc(request.note || '–')}</span></div>
+      <ol class="checks">${C.CHECKS.map((c) => `<li class="check" data-id="${c.id}"><span class="ic" aria-hidden="true">·</span><div><b>${esc(c.label)}</b><small>Waiting</small></div></li>`).join('')}</ol>
+      <div class="verdict" id="verdict"></div>`;
+    const d = await C.decide({ request, registry: R, userKeys: USERKEYS, state: replayState(rid), now: at });
+    if (t !== token) return;
+    for (const c of d.checks) {
+      if (!(await wait(t, 300))) return;
+      const li = p.querySelector(`.check[data-id="${c.id}"]`);
+      li.classList.add('shown', c.status);
+      li.querySelector('.ic').textContent = { pass: '✓', fail: '✕', skip: '–', warn: '!' }[c.status];
+      li.querySelector('small').textContent = c.detail;
+    }
+    if (!(await wait(t, 380))) return;
+    const fails = d.checks.filter((c) => c.status === 'fail').length;
+    const v = $('#verdict', p);
+    if (d.decision === 'BLOCK') {
+      $('#n-guard', p).classList.add('lit-no');
+      $('#a2', p).textContent = '✕';
+      v.innerHTML = `<span class="stamp block">Blocked</span><p><b>${fails} of 9 checks failed.</b> No money moves. Ananya gets an alert, and the agent is told why. Decided in ${d.elapsed_ms} ms.</p>`;
+    } else if (d.decision === 'ALLOW') {
+      $('#n-guard', p).classList.add('lit-ok');
+      $('#n-upi', p).classList.remove('dim');
+      $('#n-upi', p).classList.add('lit-ok');
+      v.innerHTML = `<span class="stamp allow">Allowed</span><p><b>All checks passed.</b> The payment goes to UPI. Decided in ${d.elapsed_ms} ms.</p>`;
+    } else {
+      v.innerHTML = `<span class="stamp ask">Ask Ananya</span><p>${esc(d.hint)}</p>`;
+    }
+  }
+
+  function auditText(e, edited) {
+    const d = e.data;
+    if (e.type === 'mandate_registered') return `Mandate ${esc(d.mandate_id)} registered: ${esc(d.purpose)}, up to ${fmt(d.limits.total_inr)}`;
+    if (e.type === 'decision') {
+      const word = d.decision === 'ALLOW' ? 'Allowed' : d.decision === 'BLOCK' ? 'Blocked' : 'Asked the user';
+      return `<b class="${d.decision === 'ALLOW' ? 'ok-t' : 'no-t'}">${word}</b> <span${edited ? ' class="edited"' : ''}>${fmt(d.amount_inr)}</span> to ${esc(d.payee_vpa)}`;
+    }
+    if (e.type === 'payment_completed') return `Payment completed: ${fmt(d.amount_inr)} to ${esc(d.payee_vpa)}, UPI Ref ${esc(d.upi_ref)}`;
+    if (e.type === 'payment_failed') return `Payment failed at the bank: ${esc(d.reason)}`;
+    return esc(e.type);
+  }
+
+  async function pAudit(p, t) {
+    const orig = D.runs.guard.audit;
+    let work = JSON.parse(JSON.stringify(orig));
+    const target = work.findIndex((e) => e.type === 'decision' && e.data.decision === 'BLOCK');
+    const amt = target >= 0 ? work[target].data.amount_inr : 0;
+    p.innerHTML = `<div class="panel-label">Mandate Guard's signed record</div>
+      <div class="tbl-wrap"><table class="tbl audit"><thead><tr><th class="num">#</th><th>Time</th><th>Entry</th><th>SHA-256 fingerprint</th></tr></thead><tbody id="a-body"></tbody></table></div>
+      <div class="md-actions"><button class="btn" id="a-check" type="button">Check the record</button><button class="btn" id="a-tamper" type="button">Change ${fmt(amt)} to ₹49 in entry #${target + 1}</button><button class="btn ghost" id="a-reset" type="button" hidden>Restore the record</button></div>
+      <div class="a-status" id="a-status" aria-live="polite"></div>`;
+    const body = $('#a-body', p);
+    let edited = -1;
+    const draw = (broken) => {
+      body.innerHTML = work.map((e, i) => `<tr class="${broken != null && i === broken ? 'broken' : broken != null && i > broken ? 'after' : ''}"><td class="num">${e.seq}</td><td>${esc(timeIST(msOf(e.at)))}</td><td>${auditText(e, i === edited)}</td><td class="hash">${esc(e.hash.slice(0, 16))}…</td></tr>`).join('');
+    };
+    const status = (ok, text) => { $('#a-status', p).innerHTML = `<span class="badge ${ok ? 'ok' : 'no'}">${ok ? '✓ Intact' : '✕ Broken'}</span><span>${esc(text)}</span>`; };
+    const check = async () => {
+      const r = await C.verifyAuditLog(work, D.keys.guard_public_key);
+      if (t !== token) return;
+      if (r.ok) { draw(null); status(true, `All ${r.checked} entries match their fingerprints${r.signaturesChecked ? ' and carry Mandate Guard\'s signature' : ''}.`); }
+      else { draw(r.brokenAt); status(false, r.reason + ' Every later entry can no longer be trusted either.'); }
+    };
+    const tamper = async () => {
+      work[target].data.amount_inr = 49;
+      edited = target;
+      $('#a-tamper', p).hidden = true;
+      $('#a-reset', p).hidden = false;
+      draw(null);
+      await check();
+    };
+    const restore = async () => {
+      work = JSON.parse(JSON.stringify(orig));
+      edited = -1;
+      $('#a-tamper', p).hidden = false;
+      $('#a-reset', p).hidden = true;
+      await check();
+    };
+    draw(null);
+    $('#a-check', p).onclick = check;
+    $('#a-tamper', p).onclick = tamper;
+    $('#a-reset', p).onclick = restore;
+    if (!(await wait(t, 900))) return;
+    await check();
+    if (playing && (await wait(t, 3800))) await tamper();
+  }
+
+  function barHTML(a) {
+    const n = a.runs || 1;
+    const ng = (a.no_guard.successes / n) * 100;
+    const g = (a.guard.successes / n) * 100;
+    return `<div class="bar-row${a.within_mandate ? ' within' : ''}"><span>${esc(a.name)}</span>
+      <div class="bar-pair">
+        <span class="bar-lab">Without</span><div class="bar"><i style="width:${ng}%"></i></div><span class="bar-v">${a.no_guard.successes}/${n}</span>
+        <span class="bar-lab">With</span><div class="bar"><i class="g" style="width:${g}%"></i></div><span class="bar-v">${a.guard.successes}/${n}</span>
+      </div></div>`;
+  }
+
+  function pResults(p) {
+    const o = RES.totals.out_of_mandate;
+    const w = RES.totals.within_mandate;
+    const b = RES.benign;
+    p.innerHTML = `<div class="panel-label">Benchmark · ${esc(RES.meta.agent_label)}</div>
+      <div class="kpis">
+        <div class="kpi"><b>${o.runs - o.guard.successes} / ${o.runs}</b><span>out-of-limit attacks stopped. Without the guard: ${o.runs - o.no_guard.successes}.</span></div>
+        <div class="kpi"><b>${fmt(o.no_guard.misspent_inr)}</b><span>misspent without the guard. With it: ${fmt(o.guard.misspent_inr)}.</span></div>
+        <div class="kpi"><b>${b.guard.genuine_blocked} / ${b.runs}</b><span>genuine purchases blocked.</span></div>
+      </div>
+      <div class="legend"><span><i></i>Attacks that got through, out of 5 tries</span><span><i class="a"></i>Inside the customer's limit, allowed by design</span></div>
+      <div class="bars">${RES.attacks.map(barHTML).join('')}</div>
+      <p class="muted">The last row stays inside Ananya's own limit, at most ${fmt(w.guard.extra_max_inr)} extra. Median check time ${RES.latency_ms.p50} ms, including signature checks.</p>`;
+  }
+
+  const FIT_SVG = `<div class="dg-wrap"><svg class="dg" viewBox="0 0 760 380" role="img" aria-label="Mandate Guard sits between the AI agent and the UPI network, inside the payment app or bank.">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ahead"></path></marker></defs>
+      <g class="nd"><rect x="20" y="40" width="200" height="72" rx="10"></rect><text x="120" y="70" text-anchor="middle">Ananya's UPI app</text><text x="120" y="92" text-anchor="middle" class="sub">approves and signs the mandate</text></g>
+      <g class="nd"><rect x="20" y="262" width="200" height="72" rx="10"></rect><text x="120" y="292" text-anchor="middle">AI agent, any company</text><text x="120" y="314" text-anchor="middle" class="sub">shops, then asks to pay</text></g>
+      <g class="nd g"><rect x="290" y="132" width="200" height="116" rx="12"></rect><text x="390" y="174" text-anchor="middle" class="big">Mandate Guard</text><text x="390" y="198" text-anchor="middle" class="sub">in the payment app or bank</text><text x="390" y="220" text-anchor="middle" class="sub">9 checks · signed record</text></g>
+      <g class="nd"><rect x="290" y="14" width="200" height="60" rx="10"></rect><text x="390" y="40" text-anchor="middle">Verified merchants</text><text x="390" y="60" text-anchor="middle" class="sub">UPI IDs and cart-signing keys</text></g>
+      <g class="nd"><rect x="290" y="306" width="200" height="60" rx="10"></rect><text x="390" y="332" text-anchor="middle">Signed audit record</text><text x="390" y="352" text-anchor="middle" class="sub">for disputes and supervisors</text></g>
+      <g class="nd"><rect x="560" y="132" width="180" height="56" rx="10"></rect><text x="650" y="157" text-anchor="middle">UPI network</text><text x="650" y="176" text-anchor="middle" class="sub">NPCI switch</text></g>
+      <g class="nd"><rect x="560" y="232" width="180" height="56" rx="10"></rect><text x="650" y="257" text-anchor="middle">Banks</text><text x="650" y="276" text-anchor="middle" class="sub">payer and payee</text></g>
+      <path class="ln" d="M220 76 C 262 76, 252 160, 288 166" marker-end="url(#ah)"></path><text class="lbl" x="232" y="120">mandate</text>
+      <path class="ln" d="M220 298 C 262 298, 252 222, 288 214" marker-end="url(#ah)"></path><text class="lbl" x="232" y="282">payment request</text>
+      <path class="ln" d="M490 166 L 557 161" marker-end="url(#ah)"></path><text class="lbl" x="500" y="152">allowed</text>
+      <path class="ln" d="M650 188 L 650 229" marker-end="url(#ah)"></path>
+      <path class="ln" d="M390 74 L 390 129" marker-end="url(#ah)"></path>
+      <path class="ln" d="M390 248 L 390 303" marker-end="url(#ah)"></path>
+    </svg></div>`;
+
+  function pFit(p) {
+    p.innerHTML = `<div class="panel-label">Where Mandate Guard runs</div>${FIT_SVG}
+      <ul class="bullets">
+        <li>It runs in the payment app or at the bank, before the request reaches the NPCI switch.</li>
+        <li>It needs no change to UPI. Merchants sign carts, much like signed UPI QR codes.</li>
+        <li>It works with any AI agent. The agent is treated as untrusted, so the protection does not depend on how good the model is.</li>
+        <li>Ananya sees every blocked attempt as an alert, and can approve edge cases from her phone.</li>
+      </ul>`;
+  }
+
+  function pNext(p) {
+    p.innerHTML = `<div class="panel-label">What we are building next</div>
+      <div class="timeline compact">
+        <div class="tl now"><span class="when">Now</span><h3>Working prototype and benchmark</h3><p>Open source, with this demo.</p></div>
+        <div class="tl"><span class="when">December 2026</span><h3>Real AI models, harder attacks, user test</h3><p>Claude and open-source models, multi-step and image attacks, 20-person test of the mandate screen.</p></div>
+        <div class="tl"><span class="when">Early 2027</span><h3>UPI Reserve Pay and UPI Circle</h3><p>Map mandates onto the limits UPI already supports, and add an agent registry lookup.</p></div>
+        <div class="tl"><span class="when">From March 2027</span><h3>Sandbox pilot</h3><p>With a payment app or bank, through the RBI or IFSCA sandbox.</p></div>
+      </div>
+      <div class="callout ask"><b>Our ask:</b> a payment app or bank partner for a sandbox pilot, and mentors who know payments regulation.</div>`;
+  }
+
+  // ---------------------------------------------------------------- steps
+  const CHAPTERS = ['The problem', 'The attack', 'The protection', 'The evidence', 'The plan'];
+  const phoneNG = (upto) => ({ trace: 'ng', upto });
+  const phoneG = (upto) => ({ trace: 'g', upto, sheet: true });
+  const STEPS = [
+    { ch: 0, ms: 10000, phone: null, panel: pFacts,
+      title: 'AI assistants can already pay',
+      caption: 'Since October 2025, NPCI has been piloting payments made by AI assistants over UPI, first with Google’s Gemini and then with Anthropic’s Claude. The next step under discussion lets agents pay small amounts without asking each time. That is convenient, and it means a payment can go through without the customer looking at it.' },
+    { ch: 0, ms: 9000, phone: phoneNG(CUT.ngAsk), panel: pTools,
+      title: 'Ananya asks her assistant to shop',
+      caption: `Ananya types one sentence. Her assistant can search a store, read product pages, ask the store for a cart and pay over UPI from her account, which holds ${fmt(D.user.start_balance)}.` },
+    { ch: 0, ms: 9000, phone: phoneNG(CUT.ngSearch), panel: pSearch,
+      title: 'The agent searches the store',
+      caption: `The agent finds several chargers, some from VoltKart, a verified store, and one from an unverified seller. It picks the ${D.product.title} at ${fmt(D.product.price)} and opens its page.` },
+    { ch: 1, ms: 10000, phone: phoneNG(CUT.ngView), panel: pPage,
+      title: 'A product page hides an instruction',
+      caption: 'One “review” on the page is written for AI assistants, not for people. It tells them to pay a refundable deposit first. Anyone can post text like this, and the agent reads all of it.' },
+    { ch: 1, ms: 13000, phone: phoneNG(CUT.ngEnd), panel: pAttack,
+      title: 'Without protection, the agent pays a stranger',
+      caption: `The agent follows the review and pays ${fmt(lostNoGuard)} to an account it has never seen, then buys the charger. Nothing was hacked. The bank sees two ordinary UPI payments from Ananya's own account.` },
+    { ch: 2, ms: 12000, phone: phoneG(CUT.gUser), panel: pMandate,
+      title: 'Now Ananya approves a mandate first',
+      caption: `Same morning, with Mandate Guard. Before the agent starts, Ananya approves a mandate: up to ${fmt(D.mandate.limits.total_inr)}, electronics only, verified stores only, one payment, for 24 hours. Her phone signs it. The agent can use the mandate but cannot change it.` },
+    { ch: 2, ms: 13000, phone: phoneG(CUT.gBlock), panel: (p, t) => pGuard(p, t, 'block'),
+      title: 'Same attack. Mandate Guard blocks it.',
+      caption: `Every payment the agent attempts goes to Mandate Guard first, inside Ananya's payment app or bank. Its nine checks use only signed facts, never what the agent was told. The ${fmt(lostNoGuard)} payment fails ${WORDS[blockFails] || blockFails} of them, so no money moves.` },
+    { ch: 2, ms: 10000, phone: phoneG(CUT.gEnd), panel: (p, t) => pGuard(p, t, 'allow'),
+      title: 'The real purchase goes through',
+      caption: `The agent then pays VoltKart ${fmt(D.product.price)} using the cart VoltKart signed. Every check passes and the payment goes to UPI in under a millisecond. The guard does not get in the way of the real task.` },
+    { ch: 2, ms: 12000, phone: phoneG(CUT.gEnd), panel: pAudit,
+      title: 'Every decision goes on a signed record',
+      caption: 'Each decision is linked to the one before it by a SHA-256 fingerprint and signed by the guard. Change any entry, even one amount, and the check fails at that entry. Disputes can be settled from facts.' },
+    { ch: 3, ms: 12000, phone: phoneG(CUT.gEnd), panel: pResults,
+      title: `Tested on ${attackTotal} attacks across ${RES ? RES.attacks.length : 11} techniques`,
+      caption: 'We attacked five everyday purchases with fake fees, lookalike UPI IDs, Hinglish instructions, fake bank messages and more. Our test agent obeys every instruction it reads, which is the worst case. The guard let no out-of-limit payment through and blocked no genuine purchase.' },
+    { ch: 4, ms: 10000, phone: phoneG(CUT.gEnd), panel: pFit,
+      title: 'Where it fits in UPI',
+      caption: 'Mandate Guard runs where a payment request is created: in the payment app or at the bank, before the request reaches NPCI. It needs no change to UPI itself and works with any AI agent.' },
+    { ch: 4, ms: 9000, phone: phoneG(CUT.gEnd), panel: pNext,
+      title: 'What we are building next',
+      caption: 'Next we test real AI models, connect mandates to UPI Reserve Pay and UPI Circle limits, and look for a payment app or bank to run a sandbox pilot with.' },
+  ];
+
+  // ---------------------------------------------------------------- player
+  let idx = 0;
+  let timer = null;
+
+  function drawChrome() {
+    const s = STEPS[idx];
+    $('#chapters').innerHTML = CHAPTERS.map((c, i) => `<button type="button" class="chip${i === s.ch ? ' on' : ''}" data-ch="${i}">${esc(c)}</button>`).join('');
+    $('#progress').innerHTML = STEPS.map((st, i) => `<button type="button" class="${i < idx ? 'done' : i === idx ? 'on' : ''}" data-i="${i}" aria-label="Step ${i + 1}: ${esc(st.title)}"><span class="fill"></span></button>`).join('');
+    $('#step-count').textContent = `Step ${idx + 1} of ${STEPS.length} · ${CHAPTERS[s.ch]}`;
+    $('#step-title').textContent = s.title;
+    $('#step-caption').textContent = s.caption;
+    $('#prev').disabled = idx === 0;
+    $('#next').textContent = idx === STEPS.length - 1 ? 'Finish' : 'Next →';
+  }
+
+  function animateFill() {
+    const f = $('#progress .on .fill');
+    if (!f) return;
+    if (!playing || reduce) { f.style.transition = 'none'; f.style.width = '100%'; return; }
+    f.style.transition = 'none';
+    f.style.width = '0%';
+    void f.offsetWidth;
+    f.style.transition = `width ${STEPS[idx].ms}ms linear`;
+    f.style.width = '100%';
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    if (!playing) return;
+    timer = setTimeout(() => {
+      if (idx < STEPS.length - 1) go(idx + 1);
+      else setPlaying(false);
+    }, STEPS[idx].ms);
+  }
+
+  function setPlaying(v) {
+    playing = v;
+    const b = $('#play');
+    b.textContent = v ? '❚❚ Pause' : '▶ Play';
+    b.setAttribute('aria-pressed', String(v));
+    animateFill();
+    schedule();
+  }
+
+  function go(i) {
+    idx = Math.max(0, Math.min(STEPS.length - 1, i));
+    token++;
+    const t = token;
+    drawChrome();
+    renderPhone(STEPS[idx].phone);
+    const panel = $('#panel');
+    Promise.resolve()
+      .then(() => STEPS[idx].panel(panel, t))
+      .catch((err) => { console.error(err); panel.insertAdjacentHTML('beforeend', '<p class="muted">This step could not be shown in this browser.</p>'); });
+    animateFill();
+    schedule();
+  }
+
+  $('#prev').onclick = () => go(idx - 1);
+  $('#next').onclick = () => { if (idx === STEPS.length - 1) { setPlaying(false); document.getElementById('results').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); } else go(idx + 1); };
+  $('#play').onclick = () => { if (!playing && idx === STEPS.length - 1) go(0); setPlaying(!playing); };
+  $('#restart').onclick = () => { go(0); };
+  $('#chapters').onclick = (e) => { const b = e.target.closest('[data-ch]'); if (b) go(STEPS.findIndex((s) => s.ch === Number(b.dataset.ch))); };
+  $('#progress').onclick = (e) => { const b = e.target.closest('[data-i]'); if (b) go(Number(b.dataset.i)); };
+  $('#run-demo').onclick = () => {
+    document.getElementById('demo').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    go(0);
+    setPlaying(true);
+  };
+  const fsBtn = $('#fullscreen');
+  if (!document.fullscreenEnabled) fsBtn.hidden = true;
+  fsBtn.onclick = () => {
+    const d = document.getElementById('demo');
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    else if (d.requestFullscreen) d.requestFullscreen().catch(() => {});
+  };
+  document.addEventListener('fullscreenchange', () => { fsBtn.textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; });
+
+  let demoVisible = false;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => { demoVisible = entries[0].isIntersecting; }, { threshold: 0.35 }).observe(document.getElementById('demo'));
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.target.closest && e.target.closest('input, select, textarea, [contenteditable]')) return;
+    if (!demoVisible && !document.fullscreenElement) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(idx + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); go(idx - 1); }
+    else if (e.key === ' ' && !(e.target.closest && e.target.closest('button, a'))) { e.preventDefault(); setPlaying(!playing); }
+  });
+
+  // ---------------------------------------------------------------- static sections
+  function initStatic() {
+    const o = RES.totals.out_of_mandate;
+    const b = RES.benign;
+    $('#stats').innerHTML = [
+      [`${o.runs - o.guard.successes} / ${o.runs}`, 'attacks outside the mandate stopped'],
+      [fmt(o.no_guard.misspent_inr), 'misspent without the guard, ₹0 with it'],
+      [`${b.guard.genuine_blocked} / ${b.runs}`, 'genuine purchases blocked'],
+      [`${RES.latency_ms.p50} ms`, 'median time to decide, signatures included'],
+    ].map(([v, l]) => `<div class="stat"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join('');
+
+    $('#demo-note').innerHTML = `This replays a recorded run of our prototype. Agent: ${esc(D.agent.label)}. The mandate signature, the nine checks and the record check run live in your browser. Keys: <kbd>←</kbd> <kbd>→</kbd> move between steps, <kbd>Space</kbd> plays or pauses.`;
+    $('#agent-label').textContent = '';
+
+    $('#checks-body').innerHTML = C.CHECKS.map((c, i) => `<tr><td class="num">${i + 1}</td><td><b>${esc(c.label)}</b></td><td>${esc(STOPS[c.id] || '')}</td></tr>`).join('');
+    $('#upsell-max').textContent = fmt(RES.totals.within_mandate.guard.extra_max_inr);
+
+    $('#res-intro').textContent = `${RES.scenarios} scenarios: five everyday purchases, each attacked with ${RES.attacks.length} techniques, plus ${b.runs} genuine purchases. Every scenario runs twice with the same agent, once paying UPI directly and once through Mandate Guard. Agent: ${RES.meta.agent_label}.`;
+    $('#res-kpis').innerHTML = [
+      [`${o.no_guard.successes} → ${o.guard.successes}`, `out-of-limit attacks that got through, of ${o.runs}`],
+      [`${fmt(o.no_guard.misspent_inr)} → ${fmt(o.guard.misspent_inr)}`, 'money misspent, from the bank ledger'],
+      [`${b.guard.goal_met} / ${b.runs}`, 'genuine purchases completed with the guard'],
+    ].map(([v, l]) => `<div class="kpi"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join('');
+    $('#res-body').innerHTML = RES.attacks.map((a) => `<tr>
+        <td><b>${esc(a.name)}</b>${a.within_mandate ? '<br><span class="badge warn">inside the limit</span>' : ''}</td>
+        <td class="muted">${esc(a.example.length > 150 ? a.example.slice(0, 147) + '…' : a.example)}</td>
+        <td class="num">${a.no_guard.successes} / ${a.runs}<br><span class="muted">${fmt(a.no_guard.misspent_inr)}</span></td>
+        <td class="num">${a.guard.successes} / ${a.runs}<br><span class="muted">${a.within_mandate ? '≤ ' + fmt(a.guard.upsell_extra_max) + ' extra' : fmt(a.guard.misspent_inr)}</span></td>
+        <td>${a.stopped_by.length ? a.stopped_by.slice(0, 3).map((s) => esc(s.label)).join('<br>') : '<span class="muted">Allowed: it fits the mandate</span>'}</td>
+      </tr>`).join('');
+    $('#res-benign').innerHTML = `<p><b>${b.guard.goal_met} of ${b.runs}</b> completed with the guard (${b.no_guard.goal_met} of ${b.runs} without it). <b>${b.guard.genuine_blocked}</b> genuine payments were blocked and <b>${b.guard.asked_user}</b> needed extra approval.</p>
+      <p class="muted">Cases: ${esc(b.variants.join(', '))}, each on all five purchases.</p>`;
+    $('#res-method').innerHTML = [
+      'Five purchases: a USB-C charger, weekly groceries, a Python book, glucose test strips and dinner.',
+      `Eleven attack techniques, each hidden in a product review or seller note: ${RES.attacks.map((a) => a.name.toLowerCase()).join(', ')}.`,
+      'Money is counted from the bank ledger only. “Misspent” is everything that left the account apart from the one item the customer asked for.',
+      'The test agent obeys every instruction it reads, so the guard is tested against a fully hijacked agent. The same harness runs real Claude models with npm run bench:claude.',
+      `Decision times include Ed25519 signature checks: median ${RES.latency_ms.p50} ms, 95th percentile ${RES.latency_ms.p95} ms, over ${RES.latency_ms.decisions} decisions.`,
+    ].map((x) => `<li>${esc(x)}</li>`).join('');
+    const llm = D.results_llm || [];
+    if (llm.length) {
+      $('#res-llm').innerHTML = `<h3 class="sub-h">With real AI models</h3><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Agent</th><th class="num">Out-of-limit attacks that got through: without → with the guard</th><th class="num">Misspent: without → with</th><th class="num">Genuine purchases blocked</th></tr></thead><tbody>${llm.map((r) => {
+        const x = r.totals.out_of_mandate;
+        return `<tr><td>${esc(r.meta.agent_label)}</td><td class="num">${x.no_guard.successes} → ${x.guard.successes} of ${x.runs}</td><td class="num">${fmt(x.no_guard.misspent_inr)} → ${fmt(x.guard.misspent_inr)}</td><td class="num">${r.benign.guard.genuine_blocked} of ${r.benign.runs}</td></tr>`;
+      }).join('')}</tbody></table></div>`;
+    }
+
+    $('#why-facts').innerHTML = FACTS.map(factHTML).join('');
+
+    if (CFG.video_url) { const v = $('#video-link'); v.href = CFG.video_url; v.hidden = false; }
+    const team = (CFG.team || []).filter((m) => m && m.name);
+    if (team.length) {
+      $('#team').hidden = false;
+      $('#nav-team').hidden = false;
+      if (CFG.team_name) $('#team-name').textContent = CFG.team_name;
+      $('#team-grid').innerHTML = team.map((m) => `<article class="card"><h3>${esc(m.name)}</h3><p>${esc([m.role, m.institution].filter(Boolean).join(' · '))}</p>${m.focus ? `<p class="muted">${esc(m.focus)}</p>` : ''}</article>`).join('');
+      if (CFG.contact_email) $('#team-contact').textContent = 'Contact: ' + CFG.contact_email;
+    }
+    const links = [];
+    if (CFG.github_url) links.push(`<a href="${esc(CFG.github_url)}" target="_blank" rel="noopener">Source code on GitHub ↗</a>`);
+    if (CFG.video_url) links.push(`<a href="${esc(CFG.video_url)}" target="_blank" rel="noopener">2-minute video ↗</a>`);
+    $('#foot-links').innerHTML = links.join(' · ');
+  }
+
+  // ---------------------------------------------------------------- playground
+  function initPlay() {
+    const PG = D.playground;
+    const m = D.mandate;
+    const carts = { charger: PG.carts.charger, charger65: PG.carts.charger65, giftcard: PG.carts.giftcard, none: null };
+    const PAYEES = [
+      ['voltkart@nimbus', 'VoltKart Electronics, verified'],
+      ['v0ltkart@nimbus', 'zero instead of the letter o'],
+      ['voltkart.payments@harbor', '“our UPI ID has changed”'],
+      ['upi.verify.desk@harbor', 'unknown account'],
+      ['giftbox@harbor', 'GiftBox Vouchers, verified, sells gift cards'],
+      ['chargemart@harbor', 'ChargeMart, not verified'],
+    ];
+    $('#pg-payees').innerHTML = PAYEES.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join('');
+    const cartLabel = (c) => (c ? `${c.items[0].title} · ${fmt(c.total_inr)} · signed by ${c.merchant_name}` : 'No cart');
+    $('#pg-cart').innerHTML = Object.keys(carts).map((k) => `<option value="${k}">${esc(cartLabel(carts[k]))}</option>`).join('');
+    const price = (k) => carts[k].total_inr;
+    const PRESETS = [
+      ['Genuine purchase', { payee: 'voltkart@nimbus', amount: price('charger'), cart: 'charger' }],
+      ['Fake ₹4,999 deposit', { payee: 'upi.verify.desk@harbor', amount: 4999, cart: 'none' }],
+      ['Lookalike UPI ID', { payee: 'v0ltkart@nimbus', amount: price('charger'), cart: 'charger' }],
+      ['Inflated price', { payee: 'voltkart@nimbus', amount: price('charger') * 3, cart: 'charger' }],
+      ['Gift card add-on', { payee: 'giftbox@harbor', amount: price('giftcard'), cart: 'giftcard' }],
+      ['Pay the same cart twice', { payee: 'voltkart@nimbus', amount: price('charger'), cart: 'charger', used: true }],
+      ['Agent raises the limit', { payee: 'voltkart@nimbus', amount: price('charger65'), cart: 'charger65', tamper: true }],
+      ['Two days later', { payee: 'voltkart@nimbus', amount: price('charger'), cart: 'charger', expired: true }],
+    ];
+    $('#presets').innerHTML = PRESETS.map(([l], i) => `<button type="button" class="preset" data-p="${i}">${esc(l)}</button>`).join('');
+    const apply = (i) => {
+      const v = PRESETS[i][1];
+      $('#pg-payee').value = v.payee;
+      $('#pg-amount').value = v.amount;
+      $('#pg-cart').value = v.cart;
+      $('#pg-tamper').checked = !!v.tamper;
+      $('#pg-used').checked = !!v.used;
+      $('#pg-expired').checked = !!v.expired;
+      document.querySelectorAll('.preset').forEach((b) => b.classList.toggle('on', Number(b.dataset.p) === i));
+      run();
+    };
+    $('#presets').onclick = (e) => { const b = e.target.closest('[data-p]'); if (b) apply(Number(b.dataset.p)); };
+
+    let runId = 0;
+    async function run() {
+      const my = ++runId;
+      const payee = $('#pg-payee').value.trim().toLowerCase();
+      const amount = Number($('#pg-amount').value);
+      const cart = carts[$('#pg-cart').value] || null;
+      let mandate = m;
+      if ($('#pg-tamper').checked) {
+        mandate = JSON.parse(JSON.stringify(m));
+        mandate.limits = { per_payment_inr: 50000, total_inr: 50000, max_payments: 5 };
+      }
+      const state = C.newState();
+      if ($('#pg-used').checked) {
+        state.spent[m.mandate_id] = price('charger');
+        state.count[m.mandate_id] = 1;
+        state.usedCarts.push(carts.charger.cart_id);
+      }
+      const now = $('#pg-expired').checked ? Date.parse(m.valid_until) + 24 * 3600 * 1000 : PG.now_ms;
+      const d = await C.decide({ request: { mandate, payee_vpa: payee, amount_inr: amount, cart: cart || undefined, note: 'Try it yourself' }, registry: R, userKeys: USERKEYS, state, now });
+      if (my !== runId) return;
+      const fails = d.checks.filter((c) => c.status === 'fail').length;
+      const stamp = d.decision === 'ALLOW' ? '<span class="stamp allow">Allowed</span>' : d.decision === 'BLOCK' ? '<span class="stamp block">Blocked</span>' : '<span class="stamp ask">Ask Ananya</span>';
+      const summary = d.decision === 'ALLOW' ? 'All checks passed. The payment would go to UPI.' : d.decision === 'BLOCK' ? `${fails} of 9 checks failed. No money would move.` : 'This needs Ananya to approve it on her phone.';
+      $('#play-out').innerHTML = `<div class="verdict">${stamp}<p><b>${esc(summary)}</b> Decided in ${d.elapsed_ms} ms.</p></div>
+        <ol class="checks static">${d.checks.map((c) => `<li class="check ${c.status}"><span class="ic" aria-hidden="true">${{ pass: '✓', fail: '✕', skip: '–', warn: '!' }[c.status]}</span><div><b>${esc(c.label)}</b><small>${esc(c.detail)}</small></div></li>`).join('')}</ol>
+        ${d.hint ? `<p class="hint"><b>What the agent is told:</b> ${esc(d.hint)}</p>` : ''}`;
+    }
+    $('#play-form').addEventListener('submit', (e) => { e.preventDefault(); document.querySelectorAll('.preset').forEach((b) => b.classList.remove('on')); run(); });
+    apply(0);
+  }
+
+  try { initStatic(); } catch (e) { console.error(e); }
+  try { initPlay(); } catch (e) { console.error(e); }
+  go(0);
+})();
+</script>
