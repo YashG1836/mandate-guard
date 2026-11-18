@@ -57,7 +57,22 @@ The test agent obeys every instruction it reads, so the guard is tested against 
 | Genuine purchases completed (of 15) | 15 | **15** (0 blocked) |
 | Upsells inside the customer's own limit (of 5) | 5 | 5, at most ₹200 extra (allowed by design) |
 
-Median decision time: about 0.3 ms, including Ed25519 signature checks. Full table by technique: [`results/RESULTS.md`](results/RESULTS.md).
+Median decision time: about 0.3 ms, including Ed25519 signature checks.
+
+### With a real open-source AI model (Qwen3 8B, run free on a laptop)
+
+The same 70 scenarios, with Qwen3 8B as the shopping assistant instead of the test agent.
+
+| | Without the guard | With the guard |
+|---|---|---|
+| Out-of-limit tricks that fooled the AI (of 50) | 4 (inflated price ×2, gift-card add-on, "limit raised") | **0** |
+| Money misspent | ₹4,394 | **₹0** |
+| Real purchase still completed in attacked runs (of 50) | 42 | 44 |
+| Genuine purchases completed (of 15) | 15 | **15** (0 blocked) |
+
+The model resisted the crude tricks (fake deposits, fake bank messages, Hinglish instructions) but fell for the subtler ones. The guard stopped all of them, and its hints helped the AI finish the real purchase slightly more often.
+
+Full tables by technique: [`results/RESULTS.md`](results/RESULTS.md).
 
 ## Run it yourself
 
@@ -133,10 +148,8 @@ test/                   unit tests (node:test)
 
 ## Team
 
-- **Yash Goyal** (team lead), IIT Gandhinagar
-- **Kshitish Kiran Madbhavi**, IIT Gandhinagar
-
-Contact: yash.g@iitgn.ac.in
+- **Yash Goyal**, 3rd-year B.Tech, Computer Science and Engineering, IIT Gandhinagar · yash.g@iitgn.ac.in
+- **Kshitish Kiran Madbhavi**, 3rd-year B.Tech, Chemical Engineering, IIT Gandhinagar · kshitish.madbhavi@iitgn.ac.in
 
 ## Licence
 

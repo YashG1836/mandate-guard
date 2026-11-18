@@ -129,8 +129,9 @@ async function runAll(opts) {
       const u = await runOllama(env, { model, hardened: !!opts.hardened });
       usage.input_tokens += u.input_tokens; usage.output_tokens += u.output_tokens; usage.calls += u.calls;
     };
-    agentLabel = `Open-source model ${model}, run locally with Ollama${opts.hardened ? ', hardened prompt' : ''}`;
-    tag = `ollama-${model.replace(/[^a-z0-9.]+/gi, '-')}${opts.hardened ? '-hardened' : ''}`;
+    const display = opts.name || model;
+    agentLabel = `${display} (open-source, run free on a laptop)${opts.hardened ? ', hardened prompt' : ''}`;
+    tag = `ollama-${display.toLowerCase().replace(/[^a-z0-9.]+/g, '-')}${opts.hardened ? '-hardened' : ''}`;
   } else if (opts.agent === 'claude') {
     const { runClaude } = await import('../src/agents/claude.js');
     const model = opts.model || 'claude-opus-5-5';

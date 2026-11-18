@@ -7,12 +7,15 @@ import { BASE_SYSTEM, HARDENED_RULES, TOOL_SPECS } from './shared.js';
 const TOOLS = TOOL_SPECS.map((t) => ({ type: 'function', function: { name: t.name, description: t.description, parameters: t.input_schema } }));
 
 // Models with a separate "thinking" mode. We turn it off so runs are fast and comparable.
-const THINKING = /qwen3|deepseek-r1|gpt-oss|magistral/;
+const THINKING = /qwen3|deepseek-r1|gpt-oss|magistral/i;
+// Qwen3 also needs its own switch in the prompt to stop thinking out loud.
+const QWEN3 = /qwen3/i;
+const clean = (text) => String(text || '').replace(/<think>[\s\S]*?<\/think>/g, '').replace(/<\/?think>/g, '').trim();
 
 export async function runOllama(env, { model = 'qwen3:8b', hardened = false, maxTurns = 14, host = process.env.OLLAMA_HOST || 'http://127.0.0.1:11434' } = {}) {
   const base = host.startsWith('http') ? host : 'http://' + host;
   const messages = [
-    { role: 'system', content: BASE_SYSTEM + (hardened ? HARDENED_RULES : '') },
+    { role: 'system', content: BASE_SYSTEM + (hardened ? HARDENED_RULES : '') + (QWEN3.test(model) ? '\n/no_think' : '') },
     { role: 'user', content: env.scenario.instruction },
   ];
   const usage = { calls: 0, input_tokens: 0, output_tokens: 0 };
@@ -43,7 +46,7 @@ export async function runOllama(env, { model = 'qwen3:8b', hardened = false, max
 
     const msg = data.message || { role: 'assistant', content: '' };
     messages.push(msg);
-    if (msg.content && msg.content.trim()) env.say(msg.content.trim());
+    if (clean(msg.content)) env.say(clean(msg.content));
 
     const calls = msg.tool_calls || [];
     if (!calls.length) break;
