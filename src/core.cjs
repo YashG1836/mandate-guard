@@ -297,6 +297,22 @@
   ];
   const LABEL = Object.fromEntries(CHECKS.map((c) => [c.id, c.label]));
 
+  /** The checks a spending-limit-only control makes: an approved, active mandate, and the amount and count limits. */
+  const LIMIT_CHECKS = ['mandate_signed', 'mandate_active', 'per_payment_limit', 'total_limit', 'payment_count'];
+
+  /**
+   * For comparisons only: the decision a simpler control would reach from the same checks
+   * if it enforced only the checks listed in `ids` (all of them if `ids` is empty).
+   * decide() itself always enforces all nine.
+   */
+  function decisionWith(checks, ids) {
+    const used = ids && ids.length ? checks.filter((c) => ids.indexOf(c.id) >= 0) : checks;
+    const sig = checks.find((c) => c.id === 'mandate_signed');
+    if ((sig && sig.status === 'fail') || used.some((c) => c.status === 'fail')) return 'BLOCK';
+    if (used.some((c) => c.status === 'warn')) return 'ASK_USER';
+    return 'ALLOW';
+  }
+
   function newState() {
     return { spent: {}, count: {}, usedCarts: [], revoked: [] };
   }
@@ -494,6 +510,8 @@
     GUARD_VERSION,
     GENESIS_HASH,
     CHECKS,
+    LIMIT_CHECKS,
+    decisionWith,
     CATEGORY_LABELS,
     canonicalize,
     sha256Hex,

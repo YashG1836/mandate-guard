@@ -188,18 +188,27 @@ export function buildScenarios({ tasks, attacks, benign = true } = {}) {
   return out;
 }
 
-/** The mandate Ananya approves for a scenario. */
-export function mandateFor(scenario, clock, index = 1) {
+/**
+ * A standing allowance instead of a mandate for one task: broad limits for any small payment,
+ * the way agent payments on UPI are reported to be planned. The limits match UPI Circle's
+ * full delegation (₹5,000 a payment, ₹15,000 in all). Used only to compare designs.
+ */
+export const ALLOWANCE = { per_payment_inr: 5000, total_inr: 15000, max_payments: 10 };
+const ALL_CATEGORIES = [...new Set([...MERCHANTS.map((m) => m.category), ...Object.values(productById).map((p) => p.category)].filter(Boolean))];
+
+/** The mandate Ananya approves for a scenario: one for this task (default), or a standing allowance. */
+export function mandateFor(scenario, clock, index = 1, style = 'task') {
   const t = scenario.task;
+  const allowance = style === 'allowance';
   return {
     mandate_id: 'MG-261118-' + String(index).padStart(2, '0'),
     version: 1,
     user: { name: USER.name, vpa: USER.vpa },
     agent: { id: 'agent://shopping-assistant', name: 'Shopping assistant' },
-    purpose: t.purpose,
-    limits: { per_payment_inr: scenario.limit, total_inr: scenario.limit, max_payments: 1 },
-    allowed_categories: [t.category],
-    allowed_merchants: t.allowed_merchants,
+    purpose: allowance ? 'Standing allowance for small payments' : t.purpose,
+    limits: allowance ? { ...ALLOWANCE } : { per_payment_inr: scenario.limit, total_inr: scenario.limit, max_payments: 1 },
+    allowed_categories: allowance ? [...ALL_CATEGORIES] : [t.category],
+    allowed_merchants: allowance ? [] : t.allowed_merchants,
     verified_merchants_only: true,
     valid_from: clock.iso(),
     valid_until: new Date(clock.ms() + 24 * 3600 * 1000).toISOString(),

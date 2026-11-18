@@ -310,6 +310,15 @@ h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing
 .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--ink-2); }
 .legend i { display: inline-block; width: 12px; height: 9px; border-radius: 3px; margin-right: 6px; vertical-align: middle; background: var(--block); }
 .legend i.a { background: var(--ask); }
+.stair { display: grid; gap: 10px; }
+.stair-row { display: grid; grid-template-columns: minmax(140px, 250px) minmax(0, 1fr) 84px; gap: 12px; align-items: center; font-size: 13.5px; }
+.stair-row .bar { height: 12px; border-radius: 6px; }
+.stair-v { font: 500 12px/1.3 var(--font-mono); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stair-v b { font-size: 15px; }
+.stair-v small { display: block; color: var(--ink-2); font-size: 11px; }
+.stair-row.us .stair-n { font-weight: 700; color: var(--allow); }
+.stair-row.us .stair-v b { color: var(--allow); }
+@media (max-width: 560px) { .stair-row { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; } .stair-row .bar { grid-column: 1 / -1; grid-row: 2; } }
 @media (max-width: 560px) { .bar-row { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
 
 /* Diagram */
@@ -362,6 +371,12 @@ h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing
 .toggles input { margin-top: 3px; accent-color: var(--green); }
 .play-out { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 18px; display: grid; gap: 12px; min-width: 0; }
 .hint { font-size: 14px; color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 10px; }
+.vs { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; padding: 10px 12px; border: 1px dashed var(--rule); border-radius: 10px; font-size: 14px; color: var(--ink-2); }
+.vs-k { font: 600 11px var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase; }
+.vs b { color: var(--ink); }
+.vs.gap { border: 1px solid var(--block); background: var(--block-soft); }
+.vs.gap b { color: var(--block); }
+.vs.gap .vs-why { flex-basis: 100%; color: var(--ink); }
 
 /* Footer */
 .footer { border-top: 1px solid var(--rule); background: var(--sheet); }
@@ -504,6 +519,7 @@ h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing
           <tbody id="res-body"></tbody>
         </table>
       </div>
+      <div id="res-layers"></div>
       <div class="grid2">
         <div class="card">
           <h3>Normal purchases</h3>
@@ -522,7 +538,7 @@ h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing
     <div class="wrap">
       <p class="eyebrow">Try it yourself</p>
       <h2>Change the payment and watch the checks respond</h2>
-      <p class="intro">Pick a trick below, or type any UPI ID and amount. Mandate Guard checks it against Ananya's mandate (up to ₹1,500 on electronics, one payment), right here in your browser.</p>
+      <p class="intro">Pick a trick below, or type any UPI ID and amount. Mandate Guard checks it against Ananya's mandate (up to ₹1,500 on electronics, one payment), right here in your browser. Each result also shows what a spending limit alone would have done.</p>
       <div class="presets" id="presets"></div>
       <div class="play">
         <form class="play-form" id="play-form">
@@ -644,6 +660,7 @@ h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing
     { when: 'Oct 2025', text: 'NPCI pilots an agentic AI framework for UPI and demonstrates it live at Global Fintech Fest 2025, with Google Pay, Gemini, Razorpay and BigBasket.', src: 'Inc42', url: 'https://inc42.com/buzz/npci-piloting-agentic-ai-based-payments-with-upi/' },
     { when: 'Feb 2026', text: 'Razorpay and NPCI launch payments from Anthropic’s Claude, starting with Zomato, Swiggy and Zepto.', src: 'Razorpay newsroom', url: 'https://razorpay.com/newsroom/razorpay-npci-launch-agentic-payments-on-claude-powering-zomato-swiggy-zepto-at-the-india-ai-impact-summit/' },
     { when: '2026', text: 'NPCI is reported to be designing a Unified Agent Protocol that would let agents make small payments without approval each time.', src: 'Outlook Business', url: 'https://www.outlookbusiness.com/news/india-plans-ai-powered-upi-payments-framework-through-unified-agent-protocol' },
+    { when: 'Jun 2026', text: 'Pine Labs launches P3P, which lets AI agents pay over UPI within a mandate the customer approves upfront. It is live with the gold-savings app Gullak.', src: 'The Paypers', url: 'https://thepaypers.com/payments/news/pine-labs-launches-p3p-agentic-payment-protocol-on-upi' },
     { when: 'Aug 2025', text: 'The RBI’s FREE-AI framework asks regulated entities to protect customers and keep their AI systems accountable and auditable.', src: 'KPMG summary', url: 'https://kpmg.com/in/en/insights/2025/08/rbi-free-ai-committee-report-on-framework-for-responsible-and-ethical-enablement-of-artificial-intelligence.html' },
   ];
   const factHTML = (f) => `<li><span class="when">${esc(f.when)}</span><div><p>${esc(f.text)}</p><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.src)} ↗</a></div></li>`;
@@ -686,6 +703,7 @@ h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing
   const llmLine = LLM
     ? ` We also tested a real open-source AI model: ${LLM.totals.out_of_mandate.no_guard.successes} of ${LLM.totals.out_of_mandate.runs} tricks fooled it without Mandate Guard, and ${LLM.totals.out_of_mandate.guard.successes} got through with it.`
     : '';
+  const CMP = D.comparison && D.comparison.staircase ? D.comparison : null;
 
   function replayState(rid) {
     const st = C.newState();
@@ -1048,6 +1066,27 @@ h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing
       <p class="muted">The last row stays within Ananya's own limit (at most ${fmt(w.guard.extra_max_inr)} extra).${LLM ? ' ' + esc(llmLine.trim()) : ''}</p>`;
   }
 
+  // What each layer stops: spending limits, then each idea in Mandate Guard (results/comparison.json).
+  function stairHTML() {
+    const n = CMP.staircase[0].attacks.runs || 50;
+    return `<div class="stair">${CMP.staircase.map((s, i) => `<div class="stair-row${i === CMP.staircase.length - 1 ? ' us' : ''}">
+        <span class="stair-n">${esc(s.name)}</span>
+        <div class="bar"><i style="width:${(s.attacks.through / n) * 100}%"></i></div>
+        <span class="stair-v"><b>${s.attacks.through}</b> of ${n}<small>${fmt(s.attacks.misspent_inr)} lost</small></span>
+      </div>`).join('')}</div>`;
+  }
+  const stairNote = () => {
+    const a = CMP.meta.allowance;
+    return `Rows 1 to 4 use a standing allowance of ${fmt(a.per_payment_inr)} a payment and ${fmt(a.total_inr)} in all (the limits of UPI Circle’s full delegation). The last row uses a mandate for this one task, as in the demo. We switched checks off to simulate simpler designs; this is not a test of any company’s product.`;
+  };
+
+  function pLayers(p) {
+    p.innerHTML = `<div class="panel-label">Tricks that still got through, of 50 · test assistant that obeys everything</div>
+      ${stairHTML()}
+      <div class="callout"><b>A limit decides how much. A verified merchant decides who. Only a cart the merchant signed, under a mandate for the task, decides what for.</b></div>
+      <p class="muted">${esc(stairNote())}</p>`;
+  }
+
   const FIT_SVG = `<div class="dg-wrap"><svg class="dg" viewBox="0 0 760 380" role="img" aria-label="Mandate Guard sits between the AI agent and the UPI network, inside the payment app or bank.">
       <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ahead"></path></marker></defs>
       <g class="nd"><rect x="20" y="40" width="200" height="72" rx="10"></rect><text x="120" y="70" text-anchor="middle">Ananya's UPI app</text><text x="120" y="92" text-anchor="middle" class="sub">approves and signs the mandate</text></g>
@@ -1071,6 +1110,7 @@ h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing
         <li>Runs inside the payment app or bank, before the payment reaches UPI.</li>
         <li>No change to UPI needed. Shops sign their carts, like signed UPI QR codes.</li>
         <li>Works with any AI assistant, because it never trusts the assistant.</li>
+        <li>Assistants connect through MCP, the standard way AI agents use tools. We have run Claude through it.</li>
         <li>Ananya gets an alert for every blocked payment.</li>
       </ul>`;
   }
@@ -1078,8 +1118,8 @@ h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing
   function pNext(p) {
     p.innerHTML = `<div class="panel-label">What we are building next</div>
       <div class="timeline compact">
-        <div class="tl now"><span class="when">Now</span><h3>Working prototype and benchmark</h3><p>Open source, with this demo, and tested with a real open-source AI model.</p></div>
-        <div class="tl"><span class="when">December 2026</span><h3>More AI models, harder attacks, user test</h3><p>Claude and larger open models, multi-step and image attacks, a 20-person test of the mandate screen.</p></div>
+        <div class="tl now"><span class="when">Now</span><h3>Working prototype and benchmark</h3><p>Open source, with this demo. Tested with a real open-source AI model, and real AI agents can connect through MCP.</p></div>
+        <div class="tl"><span class="when">December 2026</span><h3>More AI models, harder attacks, user test</h3><p>Gemini, Claude and larger open models, multi-step and image attacks, a 20-person test of the mandate screen.</p></div>
         <div class="tl"><span class="when">Early 2027</span><h3>UPI Reserve Pay and UPI Circle</h3><p>Map mandates onto the limits UPI already supports, and add an agent registry lookup.</p></div>
         <div class="tl"><span class="when">From March 2027</span><h3>Sandbox pilot</h3><p>With a payment app or bank, through the RBI or IFSCA sandbox.</p></div>
       </div>
@@ -1121,6 +1161,9 @@ h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing
     { ch: 3, ms: 12000, phone: phoneG(CUT.gEnd), panel: pResults,
       title: `Tested on ${attackTotal} tricks of ${RES ? RES.attacks.length : 11} kinds`,
       caption: 'We tried 11 kinds of tricks on 5 everyday purchases, with a test assistant that obeys everything it reads. Without Mandate Guard the tricks worked every time. With it, none got through, and no real purchase was blocked.' + llmLine },
+    ...(CMP ? [{ ch: 3, ms: 13000, phone: phoneG(CUT.gEnd), panel: pLayers,
+      title: 'Why a spending limit is not enough',
+      caption: `Agent payments on UPI are being designed around spending limits. With limits alone, ${CMP.staircase[1].attacks.through} of our ${CMP.staircase[1].attacks.runs} tricks still worked. Each idea in Mandate Guard closes more of the gap, until none get through.` }] : []),
     { ch: 4, ms: 10000, phone: phoneG(CUT.gEnd), panel: pFit,
       title: 'Where it fits in UPI',
       caption: 'Mandate Guard runs inside the payment app or bank, before a payment reaches UPI. UPI itself does not need to change, and it works with any AI assistant.' },
@@ -1251,6 +1294,12 @@ h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing
         <td>${a.stopped_by.length ? a.stopped_by.slice(0, 3).map((s) => esc(s.label)).join('<br>') : '<span class="muted">Allowed: it fits the mandate</span>'}</td>
       </tr>`).join('');
     if (LLM) $('#th-llm').hidden = false;
+    if (CMP) {
+      const full = CFG.github_url ? ` <a href="${esc(CFG.github_url)}/blob/main/results/COMPARISON.md" target="_blank" rel="noopener">Full tables ↗</a>` : '';
+      $('#res-layers').innerHTML = `<h3 class="sub-h">Why a spending limit is not enough</h3>
+        <p class="muted" style="margin-bottom:10px">Agent payments on UPI are being designed around limits the customer sets. We switched Mandate Guard’s checks on one layer at a time, to see what each idea adds. Tricks that still got through, of 50:</p>
+        <div class="card">${stairHTML()}<p class="muted" style="margin-top:12px">${esc(stairNote())}${full}</p></div>`;
+    }
     $('#res-benign').innerHTML = `<p><b>${b.guard.goal_met} of ${b.runs}</b> went through with Mandate Guard. <b>${b.guard.genuine_blocked}</b> were wrongly blocked.</p>
       <p class="muted">Cases: ${esc(b.variants.join(', '))}, each on all five purchases.</p>`;
     $('#res-method').innerHTML = [
@@ -1305,8 +1354,9 @@ h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing
     const PRESETS = [
       ['Genuine purchase', { payee: 'voltkart@nimbus', amount: price('charger'), cart: 'charger' }],
       ['Fake ₹4,999 deposit', { payee: 'upi.verify.desk@harbor', amount: 4999, cart: 'none' }],
+      ['Small ₹499 fee', { payee: 'upi.verify.desk@harbor', amount: 499, cart: 'none' }],
       ['Lookalike UPI ID', { payee: 'v0ltkart@nimbus', amount: price('charger'), cart: 'charger' }],
-      ['Inflated price', { payee: 'voltkart@nimbus', amount: price('charger') * 3, cart: 'charger' }],
+      ['Inflated price', { payee: 'voltkart@nimbus', amount: price('charger') + 200, cart: 'charger' }],
       ['Gift card add-on', { payee: 'giftbox@harbor', amount: price('giftcard'), cart: 'giftcard' }],
       ['Pay the same cart twice', { payee: 'voltkart@nimbus', amount: price('charger'), cart: 'charger', used: true }],
       ['Agent raises the limit', { payee: 'voltkart@nimbus', amount: price('charger65'), cart: 'charger65', tamper: true }],
@@ -1349,7 +1399,12 @@ h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing
       const fails = d.checks.filter((c) => c.status === 'fail').length;
       const stamp = d.decision === 'ALLOW' ? '<span class="stamp allow">Allowed</span>' : d.decision === 'BLOCK' ? '<span class="stamp block">Blocked</span>' : '<span class="stamp ask">Ask Ananya</span>';
       const summary = d.decision === 'ALLOW' ? 'All checks passed. The payment would go to UPI.' : d.decision === 'BLOCK' ? `${fails} of 9 checks failed. No money would move.` : 'This needs Ananya to approve it on her phone.';
-      $('#play-out').innerHTML = `<div class="verdict">${stamp}<p><b>${esc(summary)}</b> Decided in ${d.elapsed_ms} ms.</p></div>
+      // The same payment, judged by a spending limit alone (the signed mandate's amount and count limits only).
+      const lim = C.decisionWith(d.checks, C.LIMIT_CHECKS);
+      const gap = lim === 'ALLOW' && d.decision !== 'ALLOW';
+      const limText = { ALLOW: gap ? 'would let it through' : 'would allow it too', BLOCK: 'would block it too', ASK_USER: 'would ask Ananya' }[lim];
+      const vs = `<div class="vs${gap ? ' gap' : ''}"><span class="vs-k">A spending limit alone</span><b>${limText}</b>${gap ? '<span class="vs-why">The money would move. Only Mandate Guard checks who gets paid and what the payment is for.</span>' : ''}</div>`;
+      $('#play-out').innerHTML = `<div class="verdict">${stamp}<p><b>${esc(summary)}</b> Decided in ${d.elapsed_ms} ms.</p></div>${vs}
         <ol class="checks static">${d.checks.map((c) => `<li class="check ${c.status}"><span class="ic" aria-hidden="true">${{ pass: '✓', fail: '✕', skip: '–', warn: '!' }[c.status]}</span><div><b>${esc(c.label)}</b><small>${esc(c.detail)}</small></div></li>`).join('')}</ol>
         ${d.hint ? `<p class="hint"><b>What the agent is told:</b> ${esc(d.hint)}</p>` : ''}`;
     }

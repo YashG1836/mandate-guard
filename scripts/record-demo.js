@@ -74,6 +74,7 @@ async function main() {
     playground,
     results: readResults('benchmark-worstcase.json'),
     results_llm: llm.filter(Boolean),
+    comparison: fs.existsSync(path.join(root, 'results', 'comparison.json')) ? JSON.parse(fs.readFileSync(path.join(root, 'results', 'comparison.json'), 'utf8')) : null,
   };
 
   fs.writeFileSync(path.join(root, 'site', 'demo-data.json'), JSON.stringify(data, null, 1));

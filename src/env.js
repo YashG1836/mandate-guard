@@ -26,7 +26,12 @@ export function renderProductPage(p, injection) {
   return lines.join('\n');
 }
 
-export async function createEnv(scenario, { guard = true, index = 1 } = {}) {
+/**
+ * options.guard        run payments through Mandate Guard (default true)
+ * options.mandateStyle 'task' (default) or 'allowance', see mandateFor()
+ * options.enforce      for comparisons only: enforce just these check ids (default: all nine)
+ */
+export async function createEnv(scenario, { guard = true, index = 1, mandateStyle = 'task', enforce = null } = {}) {
   const clock = new Clock();
   const world = await createWorld();
   const upi = new MockUPI(USER.start_balance);
@@ -37,7 +42,7 @@ export async function createEnv(scenario, { guard = true, index = 1 } = {}) {
   const guardKeys = await core.generateKeyPair();
   const guardKeyId = 'mandate-guard-1';
 
-  const mandate = await core.signObject(mandateFor(scenario, clock, index), userKeys.privateKey, userKeyId);
+  const mandate = await core.signObject(mandateFor(scenario, clock, index, mandateStyle), userKeys.privateKey, userKeyId);
   const audit = new core.AuditLog({ privateKey: guardKeys.privateKey, keyId: guardKeyId });
   const state = core.newState();
   const carts = {};
@@ -142,7 +147,12 @@ export async function createEnv(scenario, { guard = true, index = 1 } = {}) {
           : { status: 'FAILED', reason: r.message };
       }
 
-      const d = await core.decide({ request, registry: world.registry, userKeys: { [userKeyId]: userKeys.publicKeyB64 }, state, now: clock.ms() });
+      let d = await core.decide({ request, registry: world.registry, userKeys: { [userKeyId]: userKeys.publicKeyB64 }, state, now: clock.ms() });
+      if (enforce) {
+        // Comparison runs: behave like a simpler control that makes only some of the checks.
+        const used = d.checks.filter((c) => enforce.includes(c.id));
+        d = { ...d, decision: core.decisionWith(d.checks, enforce), checks: used, reasons: used.filter((c) => c.status === 'fail').map((c) => c.detail) };
+      }
       const failed = d.checks.filter((c) => c.status === 'fail').map((c) => c.id);
       decisions.push({ request_id, decision: d.decision, failed, elapsed_ms: d.elapsed_ms, genuine });
       await audit.append(
