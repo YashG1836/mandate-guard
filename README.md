@@ -72,6 +72,16 @@ npm run serve     # http://localhost:4173
 npm run all       # test + bench + record + build
 ```
 
+### With a free open-source AI model on your own computer
+
+Install [Ollama](https://ollama.com), then:
+
+```bash
+ollama pull qwen3:8b                     # about 5 GB, or: ollama pull hf.co/Qwen/Qwen3-8B-GGUF:Q4_K_M
+npm run bench:local                      # default model: qwen3:8b
+npm run bench:local -- --model llama3.1:8b
+```
+
 ### With a real AI agent (Claude)
 
 Put your API key in a file called `.env` in this folder (it is git-ignored, so it never gets committed):

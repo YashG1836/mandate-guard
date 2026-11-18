@@ -2,7 +2,9 @@
 // Runs every scenario twice (without and with Mandate Guard) and writes results/.
 //
 //   node scripts/bench.js                         worst-case agent (offline, deterministic, free)
-//   node scripts/bench.js --agent claude          real Claude agent (needs `npm install` + credentials)
+//   node scripts/bench.js --agent ollama          free open-source model on this computer (needs Ollama)
+//        [--model qwen3:8b]
+//   node scripts/bench.js --agent claude          real Claude agent (needs `npm install` + an API key)
 //        [--model claude-opus-5-5] [--effort medium] [--hardened] [--tasks charger,book] [--attacks fake_fee,hinglish]
 import fs from 'node:fs';
 import path from 'node:path';
@@ -120,7 +122,16 @@ async function runAll(opts) {
   let agentLabel = 'Worst-case agent (obeys every instruction it reads)';
   let tag = 'worstcase';
   const usage = { input_tokens: 0, output_tokens: 0, calls: 0 };
-  if (opts.agent === 'claude') {
+  if (opts.agent === 'ollama') {
+    const { runOllama } = await import('../src/agents/ollama.js');
+    const model = opts.model || 'qwen3:8b';
+    runAgent = async (env) => {
+      const u = await runOllama(env, { model, hardened: !!opts.hardened });
+      usage.input_tokens += u.input_tokens; usage.output_tokens += u.output_tokens; usage.calls += u.calls;
+    };
+    agentLabel = `Open-source model ${model}, run locally with Ollama${opts.hardened ? ', hardened prompt' : ''}`;
+    tag = `ollama-${model.replace(/[^a-z0-9.]+/gi, '-')}${opts.hardened ? '-hardened' : ''}`;
+  } else if (opts.agent === 'claude') {
     const { runClaude } = await import('../src/agents/claude.js');
     const model = opts.model || 'claude-opus-5-5';
     const effort = opts.effort || 'medium';
@@ -137,7 +148,7 @@ async function runAll(opts) {
     for (const guard of [false, true]) jobs.push({ s, guard, i });
   });
   const rows = new Array(jobs.length);
-  const concurrency = Number(opts.concurrency || (opts.agent === 'claude' ? 3 : 8));
+  const concurrency = Number(opts.concurrency || (opts.agent === 'claude' ? 3 : opts.agent === 'ollama' ? 2 : 8));
   let next = 0;
   let done = 0;
   async function worker() {
@@ -148,13 +159,13 @@ async function runAll(opts) {
       await runAgent(env);
       rows[idx] = judge(env);
       done++;
-      if (opts.agent === 'claude') process.stdout.write(`\r  ${done}/${jobs.length} runs`);
+      if (opts.agent) process.stdout.write(`\r  ${done}/${jobs.length} runs`);
     }
   }
   await Promise.all(Array.from({ length: concurrency }, worker));
-  if (opts.agent === 'claude') process.stdout.write('\n');
+  if (opts.agent) process.stdout.write('\n');
 
-  const meta = { agent: opts.agent || 'worstcase', agent_label: agentLabel, generated_at: new Date().toISOString(), guard_version: core.GUARD_VERSION, node: process.version, usage: opts.agent === 'claude' ? usage : undefined };
+  const meta = { agent: opts.agent || 'worstcase', agent_label: agentLabel, generated_at: new Date().toISOString(), guard_version: core.GUARD_VERSION, node: process.version, usage: opts.agent ? usage : undefined };
   const agg = aggregate(rows, meta);
   return { tag, agg, rows };
 }

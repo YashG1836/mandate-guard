@@ -2,61 +2,42 @@
 <meta name="description" content="Mandate Guard lets AI agents make UPI payments only within what the account holder approved. Guided demo, test results and a live checker.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: a guided payments console. Narration on top, the customer's phone beside a live panel, evidence below. */
+/* Layout: a guided payments console. Narration on top, the customer's phone beside a live panel, evidence below.
+   Palette: clean fintech. Near-black ink #111827, one green accent #22C55E, light grey page #F9FAFB. One light theme. */
 :root {
-  --paper: #eef3f1;
+  color-scheme: light;
+  --paper: #f9fafb;
   --sheet: #ffffff;
-  --sheet-2: #f5f8f7;
-  --ink: #11232a;
-  --ink-2: #4a5e64;
-  --rule: #d2ddd9;
-  --teal: #0d5e6d;
-  --teal-soft: #dbebec;
+  --sheet-2: #f3f4f6;
+  --ink: #111827;
+  --ink-2: #6b7280;
+  --rule: #e5e7eb;
+  --teal: #111827;
+  --teal-soft: #f3f4f6;
   --on-teal: #ffffff;
-  --allow: #1b7748;
-  --allow-soft: #e0f0e7;
-  --block: #b2261d;
-  --block-soft: #f8e2df;
+  --green: #22c55e;
+  --allow: #15803d;
+  --allow-soft: #dcfce7;
+  --block: #dc2626;
+  --block-soft: #fee2e2;
   --on-block: #ffffff;
-  --ask: #8f5b00;
-  --ask-soft: #f5ead2;
-  --guilloche: rgba(13, 94, 109, 0.09);
-  --phone: #0e1b1f;
-  --phone-screen: #f7faf9;
-  --console-bg: #0f2327;
-  --console-ink: #d8e7e4;
-  --console-dim: #8eaeab;
-  --console-key: #7fd2df;
-  --console-ok: #79d6a6;
-  --console-bad: #ff958c;
-  --shadow: 0 1px 2px rgba(17, 35, 42, 0.06), 0 10px 30px rgba(17, 35, 42, 0.08);
-  --font-display: "IBM Plex Sans Condensed", "Arial Narrow", "Helvetica Neue", system-ui, sans-serif;
-  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #0b1517; --sheet: #112024; --sheet-2: #0e1b1e; --ink: #e2edea; --ink-2: #97acaa; --rule: #233639;
-    --teal: #5ebfce; --teal-soft: #13323a; --on-teal: #04181c;
-    --allow: #4fc48d; --allow-soft: #10301f; --block: #ff7d73; --block-soft: #3a1513; --on-block: #2a0705;
-    --ask: #e7b34c; --ask-soft: #33260f; --guilloche: rgba(94, 191, 206, 0.08);
-    --phone: #03080a; --phone-screen: #0f1c1f;
-    --console-bg: #071113; --console-ink: #d3e4e1; --console-dim: #84a3a0; --console-key: #7fd2df; --console-ok: #79d6a6; --console-bad: #ff958c;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --paper: #0b1517; --sheet: #112024; --sheet-2: #0e1b1e; --ink: #e2edea; --ink-2: #97acaa; --rule: #233639;
-  --teal: #5ebfce; --teal-soft: #13323a; --on-teal: #04181c;
-  --allow: #4fc48d; --allow-soft: #10301f; --block: #ff7d73; --block-soft: #3a1513; --on-block: #2a0705;
-  --ask: #e7b34c; --ask-soft: #33260f; --guilloche: rgba(94, 191, 206, 0.08);
-  --phone: #03080a; --phone-screen: #0f1c1f;
-  --console-bg: #071113; --console-ink: #d3e4e1; --console-dim: #84a3a0; --console-key: #7fd2df; --console-ok: #79d6a6; --console-bad: #ff958c;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
-  color-scheme: dark;
+  --ask: #b45309;
+  --ask-soft: #fef3c7;
+  --guilloche: transparent;
+  --phone: #111827;
+  --phone-screen: #ffffff;
+  --console-bg: #111827;
+  --console-ink: #e5e7eb;
+  --console-dim: #9ca3af;
+  --console-key: #4ade80;
+  --console-ok: #4ade80;
+  --console-bad: #f87171;
+  --shadow: 0 1px 2px rgba(17, 24, 39, 0.05), 0 8px 24px rgba(17, 24, 39, 0.06);
+  --font-display: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 * { box-sizing: border-box; }
@@ -68,7 +49,7 @@ body {
   -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
 }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--sheet); }
-a { color: var(--teal); }
+a { color: var(--ink); text-underline-offset: 2px; }
 code { font-family: var(--font-mono); font-size: 0.92em; }
 p { margin: 0; }
 h1, h2, h3, h4 { text-wrap: balance; }
@@ -78,9 +59,9 @@ h1, h2, h3, h4 { text-wrap: balance; }
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
 .muted { color: var(--ink-2); font-size: 14px; }
-.eyebrow { font: 500 12px/1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); margin: 0 0 10px; }
+.eyebrow { font: 500 12px/1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--allow); margin: 0 0 10px; }
 a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--teal) 55%, transparent); outline-offset: 2px;
+  outline: 3px solid color-mix(in srgb, var(--green) 70%, transparent); outline-offset: 2px;
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -90,8 +71,8 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
 /* Top bar */
 .topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--sheet); border-bottom: 1px solid var(--rule); }
 .topbar-in { display: flex; align-items: center; gap: 16px; height: 56px; }
-.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 700 19px/1 var(--font-display); letter-spacing: 0.01em; }
-.brand-mark { width: 28px; height: 28px; color: var(--teal); flex: none; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 800 18px/1 var(--font-display); letter-spacing: -0.01em; }
+.brand-mark { width: 28px; height: 28px; color: var(--green); flex: none; }
 .nav { margin-left: auto; display: flex; gap: 2px; }
 .nav a { padding: 7px 10px; border-radius: 6px; color: var(--ink-2); text-decoration: none; font-size: 14px; white-space: nowrap; }
 .nav a:hover { color: var(--ink); background: var(--sheet-2); }
@@ -103,26 +84,22 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
   font: 600 14px/1 var(--font-body); padding: 11px 14px; border-radius: 8px; cursor: pointer;
   display: inline-flex; align-items: center; gap: 8px; text-decoration: none; white-space: nowrap;
 }
-.btn:hover { border-color: var(--teal); }
+.btn:hover { border-color: var(--ink); }
 .btn:disabled { opacity: 0.45; cursor: default; border-color: var(--rule); }
-.btn.primary { background: var(--teal); color: var(--on-teal); border-color: var(--teal); }
+.btn.primary { background: var(--ink); color: #ffffff; border-color: var(--ink); }
+.btn.primary:hover { background: #000000; }
 .btn.ghost { background: transparent; }
 
 /* Hero */
 .hero { background: var(--sheet); border-bottom: 1px solid var(--rule); position: relative; overflow: hidden; }
-.hero::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background-image: repeating-radial-gradient(circle at 88% 20%, var(--guilloche) 0 1px, transparent 1px 8px);
-  -webkit-mask-image: linear-gradient(to left, #000 10%, transparent 70%); mask-image: linear-gradient(to left, #000 10%, transparent 70%);
-}
 .hero-in { position: relative; z-index: 1; padding-block: 52px 36px; display: grid; gap: 18px; }
-h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing: -0.01em; margin: 0; max-width: 19ch; }
+h1 { font: 800 clamp(32px, 4.8vw, 56px)/1.06 var(--font-display); letter-spacing: -0.03em; margin: 0; max-width: 20ch; }
 .lead { font-size: clamp(17px, 1.7vw, 19px); color: var(--ink-2); max-width: 64ch; }
 .lead b { color: var(--ink); font-weight: 600; }
 .cta { display: flex; flex-wrap: wrap; gap: 10px; }
 .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--rule); margin-top: 8px; }
 .stat { padding: 16px 16px 0 0; display: grid; gap: 2px; min-width: 0; }
-.stat b { font: 700 32px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.stat b { font: 800 30px/1.1 var(--font-display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .stat span { color: var(--ink-2); font-size: 14px; }
 @media (max-width: 760px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
@@ -137,14 +114,14 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
 }
 .chip.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .step-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 500 13px var(--font-mono); color: var(--ink-2); }
-.step-title { font: 700 clamp(26px, 3.2vw, 38px)/1.08 var(--font-display); margin: 0; }
+.step-title { font: 800 clamp(24px, 3vw, 34px)/1.12 var(--font-display); letter-spacing: -0.02em; margin: 0; }
 .step-caption { max-width: 76ch; font-size: 17.5px; min-height: 4.8em; }
 .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .progress { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; flex: 1 1 260px; min-width: 200px; }
 .progress button { position: relative; overflow: hidden; height: 9px; border-radius: 5px; border: 0; padding: 0; background: var(--rule); cursor: pointer; }
-.progress button.done { background: color-mix(in srgb, var(--teal) 45%, var(--rule)); }
-.progress button.on { background: color-mix(in srgb, var(--teal) 25%, var(--rule)); }
-.progress .fill { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--teal); }
+.progress button.done { background: color-mix(in srgb, var(--green) 55%, var(--rule)); }
+.progress button.on { background: color-mix(in srgb, var(--green) 25%, var(--rule)); }
+.progress .fill { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--green); }
 .progress button.on .fill { width: 100%; }
 .stage { display: grid; grid-template-columns: 316px minmax(0, 1fr); gap: 20px; align-items: start; }
 .demo-note { margin-top: 14px; color: var(--ink-2); font-size: 14px; max-width: 90ch; }
@@ -159,7 +136,7 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
 .screen { background: var(--phone-screen); border-radius: 31px; flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
 .statusbar { display: flex; justify-content: space-between; padding: 12px 22px 4px; font: 600 12px var(--font-body); color: var(--ink); }
 .apphead { display: flex; align-items: center; gap: 10px; padding: 8px 14px 10px; border-bottom: 1px solid var(--rule); }
-.avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--teal-soft); color: var(--teal); display: grid; place-items: center; font: 700 13px var(--font-body); flex: none; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--allow-soft); color: var(--allow); display: grid; place-items: center; font: 700 13px var(--font-body); flex: none; }
 .who { font-weight: 600; font-size: 14px; line-height: 1.2; }
 .apphead small { display: block; color: var(--ink-2); font-size: 11.5px; }
 .balance { margin-left: auto; text-align: right; font: 500 10.5px var(--font-mono); color: var(--ink-2); }
@@ -179,8 +156,8 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
 .sms .from { display: block; font: 600 10.5px var(--font-body); color: var(--ink-2); letter-spacing: 0.04em; margin-bottom: 2px; }
 .guardnote { background: var(--block-soft); border: 1px solid color-mix(in srgb, var(--block) 40%, transparent); border-radius: 10px; padding: 8px 10px; font-size: 12.5px; line-height: 1.4; }
 .guardnote b { display: block; color: var(--block); }
-.sheet-card { background: var(--sheet); border: 1.5px solid var(--teal); border-radius: 12px; padding: 10px 11px; font-size: 12.5px; display: grid; gap: 4px; }
-.sc-title { font-weight: 700; font-size: 13px; color: var(--teal); }
+.sheet-card { background: var(--sheet); border: 1.5px solid var(--green); border-radius: 12px; padding: 10px 11px; font-size: 12.5px; display: grid; gap: 4px; }
+.sc-title { font-weight: 700; font-size: 13px; color: var(--ink); }
 .sc-row { display: flex; justify-content: space-between; gap: 10px; }
 .sc-row span { color: var(--ink-2); }
 .sc-row b { text-align: right; }
@@ -192,17 +169,17 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
 .panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); min-height: 660px; padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 @media (max-width: 920px) { .panel { min-height: 0; } }
 .panel-label { font: 500 12px/1.3 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
-.callout { border-left: 3px solid var(--teal); background: var(--teal-soft); padding: 12px 14px; border-radius: 0 10px 10px 0; font-size: 15px; }
+.callout { border-left: 3px solid var(--green); background: var(--sheet-2); padding: 12px 14px; border-radius: 0 10px 10px 0; font-size: 15px; }
 .callout.ask { border-left-color: var(--ask); background: var(--ask-soft); }
 .quote p { font-size: 17px; margin-top: 6px; }
 .facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .facts li { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
-.facts .when { font: 600 13px var(--font-mono); color: var(--teal); padding-top: 2px; }
+.facts .when { font: 600 13px var(--font-mono); color: var(--allow); padding-top: 2px; }
 .facts p { font-size: 16px; }
 .facts a { font-size: 13px; }
 .tools { display: grid; gap: 8px; }
 .tool { display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 10px; }
-.tool code { font-weight: 600; color: var(--teal); }
+.tool code { font-weight: 600; color: var(--ink); }
 .tool.money { border-color: color-mix(in srgb, var(--block) 45%, var(--rule)); }
 .tool.reads { border-color: color-mix(in srgb, var(--ask) 45%, var(--rule)); }
 @media (max-width: 560px) { .tool { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
@@ -227,7 +204,7 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
 .tbl th, .tbl td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
 .tbl th { font: 500 11.5px var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); }
 .tbl .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tbl tr.pick td { background: var(--teal-soft); }
+.tbl tr.pick td { background: var(--allow-soft); }
 
 /* Product page mock */
 .browser { border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; background: var(--sheet); }
@@ -252,14 +229,13 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
 .outcome { border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; animation: pop 0.3s ease both; }
 .outcome.bad { background: var(--block-soft); border: 1px solid color-mix(in srgb, var(--block) 40%, transparent); }
 .outcome.good { background: var(--allow-soft); border: 1px solid color-mix(in srgb, var(--allow) 40%, transparent); }
-.outcome .big { font: 700 30px/1.1 var(--font-display); }
+.outcome .big { font: 800 30px/1.1 var(--font-display); letter-spacing: -0.02em; }
 .outcome.bad .big { color: var(--block); }
 
 /* Mandate document */
 .mandate-doc { border: 1.5px solid var(--teal); border-radius: 10px; background: var(--sheet); position: relative; overflow: hidden; }
-.mandate-doc::before { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: repeating-linear-gradient(135deg, var(--guilloche) 0 1px, transparent 1px 7px); }
 .md-head { position: relative; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; padding: 11px 14px; border-bottom: 1.5px solid var(--teal); }
-.md-head h4 { margin: 0; font: 700 16px var(--font-display); letter-spacing: 0.07em; text-transform: uppercase; color: var(--teal); }
+.md-head h4 { margin: 0; font: 800 14px var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); }
 .md-id { font: 500 12px var(--font-mono); color: var(--ink-2); }
 .md-grid { position: relative; display: grid; grid-template-columns: 150px minmax(0, 1fr); margin: 0; }
 .md-grid dt { padding: 8px 14px; font: 500 11px/1.4 var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); border-bottom: 1px solid var(--rule); }
@@ -276,7 +252,7 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
 .flow { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.2fr) auto minmax(0, 1fr); gap: 8px; align-items: center; }
 .node { border: 1px solid var(--rule); border-radius: 10px; padding: 9px 8px; text-align: center; font-size: 14px; font-weight: 600; background: var(--sheet-2); transition: background 0.3s, border-color 0.3s, opacity 0.3s; }
 .node small { display: block; font-weight: 400; font-size: 12px; color: var(--ink-2); }
-.node.guard { border-color: var(--teal); background: var(--teal-soft); }
+.node.guard { border-color: var(--green); background: var(--allow-soft); }
 .node.dim { opacity: 0.45; }
 .node.lit-ok { border-color: var(--allow); background: var(--allow-soft); opacity: 1; }
 .node.lit-no { border-color: var(--block); background: var(--block-soft); }
@@ -298,7 +274,7 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
 .check small { display: block; font-size: 13px; color: var(--ink-2); line-height: 1.4; }
 .verdict { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; min-height: 54px; }
 .verdict p { flex: 1 1 260px; font-size: 15px; }
-.stamp { font: 700 26px/1 var(--font-display); letter-spacing: 0.1em; text-transform: uppercase; padding: 8px 14px; border: 3px solid currentColor; border-radius: 8px; transform: rotate(-4deg); animation: stamp 0.38s cubic-bezier(0.2, 1.6, 0.4, 1) both; }
+.stamp { font: 800 24px/1 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 14px; border: 3px solid currentColor; border-radius: 8px; transform: rotate(-4deg); animation: stamp 0.38s cubic-bezier(0.2, 1.6, 0.4, 1) both; }
 .stamp.block { color: var(--block); }
 .stamp.allow { color: var(--allow); }
 .stamp.ask { color: var(--ask); }
@@ -316,7 +292,7 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
 /* Results */
 .kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .kpi { border: 1px solid var(--rule); border-radius: 10px; padding: 12px; display: grid; gap: 2px; min-width: 0; }
-.kpi b { font: 700 28px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.kpi b { font: 800 28px/1.1 var(--font-display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .kpi span { font-size: 13px; color: var(--ink-2); }
 @media (max-width: 640px) { .kpis { grid-template-columns: minmax(0, 1fr); } }
 .bars { display: grid; gap: 9px; }
@@ -336,39 +312,39 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
 .dg-wrap { overflow-x: auto; }
 .dg { width: 100%; min-width: 600px; height: auto; display: block; }
 .dg .nd rect { fill: var(--sheet-2); stroke: var(--rule); stroke-width: 1.5; }
-.dg .nd.g rect { fill: var(--teal-soft); stroke: var(--teal); stroke-width: 2; }
+.dg .nd.g rect { fill: var(--allow-soft); stroke: var(--green); stroke-width: 2; }
 .dg text { fill: var(--ink); font: 600 14px var(--font-body); }
-.dg text.big { font: 700 19px var(--font-display); }
+.dg text.big { font: 800 18px var(--font-display); }
 .dg text.sub { fill: var(--ink-2); font: 400 12px var(--font-body); }
 .dg .ln { stroke: var(--ink-2); stroke-width: 1.6; fill: none; }
 .dg .ahead { fill: var(--ink-2); }
-.dg .lbl { fill: var(--teal); font: 500 11px var(--font-mono); }
+.dg .lbl { fill: var(--allow); font: 500 11px var(--font-mono); }
 .bullets { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
 
 /* Sections */
 .section { padding-block: 60px; border-top: 1px solid var(--rule); }
-.section h2 { font: 700 clamp(28px, 3.6vw, 42px)/1.06 var(--font-display); margin: 0 0 12px; max-width: 28ch; }
+.section h2 { font: 800 clamp(26px, 3.2vw, 38px)/1.1 var(--font-display); letter-spacing: -0.02em; margin: 0 0 12px; max-width: 28ch; }
 .section .intro { color: var(--ink-2); max-width: 68ch; margin-bottom: 26px; font-size: 17px; }
-.sub-h { font: 700 22px var(--font-display); margin: 34px 0 12px; }
+.sub-h { font: 800 20px var(--font-display); letter-spacing: -0.01em; margin: 34px 0 12px; }
 .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 18px; }
 @media (max-width: 900px) { .grid3, .grid2 { grid-template-columns: minmax(0, 1fr); } }
 .card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 18px; min-width: 0; display: grid; gap: 8px; align-content: start; }
 .card h3 { margin: 0; font-size: 18px; line-height: 1.3; }
 .card ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
-.step-no { font: 600 12px var(--font-mono); color: var(--teal); letter-spacing: 0.06em; text-transform: uppercase; }
+.step-no { font: 600 12px var(--font-mono); color: var(--allow); letter-spacing: 0.06em; text-transform: uppercase; }
 .timeline { border-left: 2px solid var(--rule); margin-left: 6px; display: grid; }
 .tl { position: relative; padding: 0 0 22px 24px; display: grid; gap: 4px; }
-.tl::before { content: ""; position: absolute; left: -8px; top: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--sheet); border: 2px solid var(--teal); }
-.tl.now::before { background: var(--teal); }
-.tl .when { font: 600 12px var(--font-mono); color: var(--teal); letter-spacing: 0.06em; text-transform: uppercase; }
+.tl::before { content: ""; position: absolute; left: -8px; top: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--sheet); border: 2px solid var(--green); }
+.tl.now::before { background: var(--green); }
+.tl .when { font: 600 12px var(--font-mono); color: var(--allow); letter-spacing: 0.06em; text-transform: uppercase; }
 .tl h3 { margin: 0; font-size: 17px; }
 .timeline.compact .tl { padding-bottom: 14px; }
 
 /* Playground */
 .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
 .preset { font: 500 13px var(--font-body); padding: 8px 11px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); cursor: pointer; }
-.preset:hover, .preset.on { border-color: var(--teal); background: var(--teal-soft); }
+.preset:hover, .preset.on { border-color: var(--ink); background: var(--sheet-2); }
 .play { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 20px; align-items: start; }
 @media (max-width: 900px) { .play { grid-template-columns: minmax(0, 1fr); } }
 .play-form { display: grid; gap: 14px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 18px; }
@@ -378,7 +354,7 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
 .toggles { display: grid; gap: 8px; border: 1px solid var(--rule); border-radius: 10px; padding: 12px; margin: 0; }
 .toggles legend { font-size: 14px; font-weight: 600; padding: 0 4px; }
 .toggles label { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; }
-.toggles input { margin-top: 3px; accent-color: var(--teal); }
+.toggles input { margin-top: 3px; accent-color: var(--green); }
 .play-out { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 18px; display: grid; gap: 12px; min-width: 0; }
 .hint { font-size: 14px; color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 10px; }
 
@@ -414,7 +390,7 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
     <div class="wrap hero-in">
       <p class="eyebrow">GIFT FutureLab Grand Challenge 2026–27 · Agentic AI · Payments</p>
       <h1>AI agents can now pay. Mandate Guard makes sure they pay only what you approved.</h1>
-      <p class="lead">When an AI assistant shops for you, anything it reads can turn into an instruction, including a fake review that says “pay a deposit first”. Mandate Guard sits between the agent and UPI. <b>A payment goes through only if it fits a mandate you signed on your phone, goes to a verified merchant, and matches a cart that merchant signed.</b></p>
+      <p class="lead">AI assistants can now shop and pay for you. But they can be tricked by what they read, like a fake review that says “pay a deposit first”. <b>Mandate Guard checks every payment before it reaches UPI, and lets through only what you approved: the right shop, the right amount, nothing extra.</b></p>
       <div class="cta">
         <button class="btn primary" id="run-demo" type="button">▶&nbsp; Run the guided demo</button>
         <a class="btn" href="#results">See the test results</a>
@@ -462,23 +438,23 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
   <section class="section" id="how">
     <div class="wrap">
       <p class="eyebrow">How it works</p>
-      <h2>Three parts, all outside the AI model</h2>
-      <p class="intro">An AI agent can be talked into almost anything by the text it reads. So Mandate Guard never asks the agent what it intends. It checks each payment against facts the agent cannot change.</p>
+      <h2>How it works, in three steps</h2>
+      <p class="intro">An AI assistant can be tricked by what it reads. So Mandate Guard never trusts the assistant. It checks each payment against things the assistant cannot change.</p>
       <div class="grid3">
         <article class="card">
-          <span class="step-no">01 · The mandate</span>
-          <h3>The customer says what the agent may spend</h3>
-          <p>A limit, the categories, which merchants, how many payments and an expiry time. The customer's phone signs it with Ed25519. It works like a UPI AutoPay or NACH mandate, written for an AI agent.</p>
+          <span class="step-no">1 · You approve</span>
+          <h3>You decide what the assistant may spend</h3>
+          <p>How much, on what, at which shops, how many payments and until when. Your phone signs it digitally, like a UPI AutoPay mandate.</p>
         </article>
         <article class="card">
-          <span class="step-no">02 · The guard</span>
+          <span class="step-no">2 · It checks</span>
           <h3>Every payment is checked before it reaches UPI</h3>
-          <p>Mandate Guard runs in the payment app or at the bank. A payment goes through only if it passes nine checks, all based on signed data. A prompt injection cannot change a signature.</p>
+          <p>Nine quick checks: is the shop real, is the amount right, is it within your limit, and more. A trick hidden in a web page cannot change a digital signature.</p>
         </article>
         <article class="card">
-          <span class="step-no">03 · The record</span>
-          <h3>Every decision is signed and chained</h3>
-          <p>Each decision is linked to the one before it by a SHA-256 fingerprint and signed by the guard. Editing, deleting or reordering an entry breaks the chain at that entry.</p>
+          <span class="step-no">3 · It records</span>
+          <h3>Every decision is saved in a tamper-proof record</h3>
+          <p>Each entry is linked to the one before it, so any change shows up. Banks and customers can settle disputes from facts.</p>
         </article>
       </div>
       <h3 class="sub-h">The nine checks</h3>
@@ -516,16 +492,16 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
       <h2>Every out-of-limit payment stopped. No genuine purchase blocked.</h2>
       <p class="intro" id="res-intro"></p>
       <div class="kpis" id="res-kpis"></div>
-      <h3 class="sub-h">By attack technique</h3>
+      <h3 class="sub-h">Every trick we tried</h3>
       <div class="tbl-wrap">
         <table class="tbl">
-          <thead><tr><th>Technique</th><th>Example of the text the agent read</th><th class="num">Got through without the guard</th><th class="num">Got through with the guard</th><th>Checks that stopped it</th></tr></thead>
+          <thead><tr><th>Trick</th><th>Example</th><th class="num">Worked without Mandate Guard</th><th class="num">Worked with Mandate Guard</th><th>What stopped it</th></tr></thead>
           <tbody id="res-body"></tbody>
         </table>
       </div>
       <div class="grid2">
         <div class="card">
-          <h3>Genuine purchases</h3>
+          <h3>Normal purchases</h3>
           <div id="res-benign"></div>
         </div>
         <div class="card">
@@ -541,7 +517,7 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
     <div class="wrap">
       <p class="eyebrow">Try it yourself</p>
       <h2>Change the payment and watch the checks respond</h2>
-      <p class="intro">This runs the prototype's guard code in your browser, against Ananya's signed mandate: up to ₹1,500 on electronics, one payment, verified merchants only. Pick a preset, or type any UPI ID and amount.</p>
+      <p class="intro">Pick a trick below, or type any UPI ID and amount. Mandate Guard checks it against Ananya's mandate (up to ₹1,500 on electronics, one payment), right here in your browser.</p>
       <div class="presets" id="presets"></div>
       <div class="play">
         <form class="play-form" id="play-form">
@@ -574,12 +550,12 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
       <p class="eyebrow">Who it is for</p>
       <h2>Trust that holds up for customers, banks and regulators</h2>
       <div class="grid3">
-        <article class="card"><h3>Customers</h3><p>An assistant can never spend more than they approved, or pay someone they did not choose. Blocked attempts show up as alerts.</p></article>
-        <article class="card"><h3>Payment apps and banks</h3><p>A control they can explain in one sentence, plus a signed record of who approved what when a customer disputes a payment.</p></article>
-        <article class="card"><h3>NPCI</h3><p>A common check that any agent payment protocol can require, whichever company built the agent.</p></article>
-        <article class="card"><h3>Regulators</h3><p>AI-initiated payments that are bounded, explainable and auditable, in line with the RBI's FREE-AI principles on protecting customers.</p></article>
-        <article class="card"><h3>Merchants</h3><p>Verified merchants keep receiving orders from agents. Impersonators get nothing, because lookalike UPI IDs are refused.</p></article>
-        <article class="card"><h3>AI companies</h3><p>They can offer payments without promising that their model will never be fooled.</p></article>
+        <article class="card"><h3>Customers</h3><p>The assistant can never spend more than you approved, or pay someone you did not choose.</p></article>
+        <article class="card"><h3>Payment apps and banks</h3><p>A simple safety check, and proof of what the customer approved if there is a dispute.</p></article>
+        <article class="card"><h3>NPCI</h3><p>One standard check for every AI assistant, whichever company built it.</p></article>
+        <article class="card"><h3>Regulators</h3><p>AI payments that stay within what customers agreed to and can be audited, in line with the RBI's FREE-AI principles.</p></article>
+        <article class="card"><h3>Merchants</h3><p>Real shops keep getting orders. Fake lookalike UPI IDs get nothing.</p></article>
+        <article class="card"><h3>AI companies</h3><p>They can offer payments without promising their AI will never be fooled.</p></article>
       </div>
       <h3 class="sub-h">Why now</h3>
       <ol class="facts" id="why-facts"></ol>
@@ -668,15 +644,15 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
   const factHTML = (f) => `<li><span class="when">${esc(f.when)}</span><div><p>${esc(f.text)}</p><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.src)} ↗</a></div></li>`;
 
   const STOPS = {
-    mandate_signed: 'A hijacked agent editing the mandate, for example raising the limit.',
-    mandate_active: 'Reusing an old or revoked mandate.',
-    payee_verified: 'Fake deposits, “our UPI ID has changed”, and lookalike IDs such as v0ltkart@nimbus.',
-    merchant_allowed: 'Buying from a store the customer did not choose. The guard asks the customer instead of blocking.',
-    category_allowed: 'Unrequested extras, such as gift cards added to a charger order.',
-    cart_signed: 'Inflated prices, payments with no order behind them, and paying the same cart twice.',
-    per_payment_limit: 'Large single payments.',
-    total_limit: 'Splitting a large payment into several small ones.',
-    payment_count: 'Repeat payments after a fake “payment failed” message.',
+    mandate_signed: 'The assistant changing the mandate, for example raising the limit.',
+    mandate_active: 'Using an old or cancelled mandate.',
+    payee_verified: 'Fake deposits, “our UPI ID has changed”, and lookalike IDs like v0ltkart@nimbus.',
+    merchant_allowed: 'Buying from a shop you did not choose. It asks you first.',
+    category_allowed: 'Extras you did not ask for, like a gift card.',
+    cart_signed: 'Wrong prices, payments with no order behind them, and paying twice.',
+    per_payment_limit: 'One big payment.',
+    total_limit: 'Many small payments that add up.',
+    payment_count: 'Paying again after a fake “payment failed” message.',
   };
 
   // ---------------------------------------------------------------- recorded runs
@@ -701,6 +677,10 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
   const blockFails = blockEv ? blockEv.checks.filter((c) => c.status === 'fail').length : 0;
   const lostNoGuard = D.runs.no_guard.ledger.filter((x) => !isVerified(x.to)).reduce((a, x) => a + x.amount, 0);
   const attackTotal = RES ? RES.totals.out_of_mandate.runs + RES.totals.within_mandate.runs : 0;
+  const LLM = (D.results_llm || [])[0];
+  const llmLine = LLM
+    ? ` We also tested a real open-source AI model: ${LLM.totals.out_of_mandate.no_guard.successes} of ${LLM.totals.out_of_mandate.runs} tricks fooled it without Mandate Guard, and ${LLM.totals.out_of_mandate.guard.successes} got through with it.`
+    : '';
 
   function replayState(rid) {
     const st = C.newState();
@@ -803,7 +783,7 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
   function pFacts(p) {
     p.innerHTML = `<div class="panel-label">Why this matters now</div>
       <ol class="facts">${FACTS.slice(0, 3).map(factHTML).join('')}</ol>
-      <div class="callout">Once an agent can pay without a PIN each time, the bank sees an ordinary UPI payment from the customer's own account. It cannot tell a payment the customer wanted from one that a web page talked the agent into.</div>`;
+      <div class="callout">Once an assistant can pay on its own, the bank cannot tell a payment you wanted from one a scammer tricked it into.</div>`;
   }
 
   const toolRow = (name, desc, tag) =>
@@ -818,7 +798,7 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
         ${toolRow('pay', "Send money over UPI from Ananya's account.", 'money')}
       </div>
       <div class="quote"><div class="panel-label">Ananya's request</div><p>“${esc(D.instruction)}”</p></div>
-      <div class="callout">Two tools carry the risk. <b>view_product</b> lets strangers' text reach the agent, and <b>pay</b> moves real money.</div>`;
+      <div class="callout">The risk: the assistant reads text that <b>anyone</b> can write, and it can <b>move real money</b>.</div>`;
   }
 
   function pSearch(p) {
@@ -850,10 +830,10 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
           <p>${esc(P.desc)}</p>
           <div class="reviews-h">Customer reviews</div>
           ${P.reviews.map((r) => `<div class="review"><div><b>${esc(r.author)}</b> <span class="stars">${stars(r.stars)}</span></div><p>${esc(r.text)}</p></div>`).join('')}
-          <div class="review injected" id="inj"><span class="tag">Instruction aimed at AI agents</span><div><b>${esc(inj.author)}</b> <span class="stars">★★★★★</span></div><p>${esc(inj.text)}</p></div>
+          <div class="review injected" id="inj"><span class="tag">Hidden message for AI assistants</span><div><b>${esc(inj.author)}</b> <span class="stars">★★★★★</span></div><p>${esc(inj.text)}</p></div>
         </div>
       </div>
-      <div class="callout">A person would scroll past this. An agent reads it as part of the page, and it is written as an order.</div>`;
+      <div class="callout">A person would ignore this. An AI assistant may follow it.</div>`;
     if (await wait(t, 700)) { const el = $('#inj', p); if (el) el.classList.add('pulse'); }
   }
 
@@ -889,8 +869,8 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
       if (!(await wait(t, 480))) return;
     }
     $('#out', p).innerHTML = `<div class="outcome bad"><div class="panel-label">Result</div><b class="big">${fmt(lostNoGuard)} lost</b>
-      <p>Sent to an account Ananya never chose. Balance ${fmtP(D.user.start_balance)} → ${fmtP(D.runs.no_guard.final_balance)}.</p>
-      <p class="muted">Both were ordinary UPI debits from her own account. The bank had no reason to stop either one.</p></div>`;
+      <p>Sent to a stranger's account. Balance ${fmtP(D.user.start_balance)} → ${fmtP(D.runs.no_guard.final_balance)}.</p>
+      <p class="muted">To the bank, it looked like a normal payment.</p></div>`;
   }
 
   function mandateHTML(m, edited) {
@@ -914,15 +894,15 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
     const m = D.mandate;
     p.innerHTML = `<div class="panel-label">The mandate Ananya approved</div>
       <div class="mandate-doc" id="mdoc"></div>
-      <div class="md-actions"><button class="btn" type="button" id="md-edit">Let the agent change the limit to ₹50,000</button><button class="btn ghost" type="button" id="md-reset" hidden>Undo the change</button></div>
-      <p class="muted">It works like a UPI AutoPay or NACH mandate, written for an AI agent. The agent attaches it to every payment request, and the guard checks the signature every time.</p>`;
+      <div class="md-actions"><button class="btn" type="button" id="md-edit">Try changing the limit to ₹50,000</button><button class="btn ghost" type="button" id="md-reset" hidden>Undo the change</button></div>
+      <p class="muted">Like a UPI AutoPay mandate, but for an AI assistant. Ananya's phone signs it, so any change breaks the signature.</p>`;
     const show = async (doc, edited) => {
       $('#mdoc', p).innerHTML = mandateHTML(doc, edited);
       const ok = await C.verifyObject(doc, D.keys.user_public_key);
       if (t !== token) return;
       const b = $('#sigstate', p);
       b.className = 'badge ' + (ok === true ? 'ok' : ok === false ? 'no' : 'warn');
-      b.textContent = ok === true ? '✓ Signature valid, checked in your browser' : ok === false ? '✕ Signature does not match: changed after signing' : 'This browser cannot check Ed25519 signatures';
+      b.textContent = ok === true ? '✓ Signature valid, checked in your browser' : ok === false ? '✕ Signature broken: someone changed the mandate' : 'This browser cannot check Ed25519 signatures';
     };
     const forged = () => {
       const f = JSON.parse(JSON.stringify(m));
@@ -943,7 +923,7 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
     const request = REQ[rid].request;
     const at = REQ[rid].at_ms;
     const cart = request.cart;
-    p.innerHTML = `<div class="panel-label">Live check, running in your browser</div>
+    p.innerHTML = `<div class="panel-label">Mandate Guard checks the payment, live in your browser</div>
       <div class="flow">
         <div class="node" id="n-agent">AI agent<small>asks to pay</small></div>
         <div class="arrow" aria-hidden="true">→</div>
@@ -969,12 +949,12 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
     if (d.decision === 'BLOCK') {
       $('#n-guard', p).classList.add('lit-no');
       $('#a2', p).textContent = '✕';
-      v.innerHTML = `<span class="stamp block">Blocked</span><p><b>${fails} of 9 checks failed.</b> No money moves. Ananya gets an alert, and the agent is told why. Decided in ${d.elapsed_ms} ms.</p>`;
+      v.innerHTML = `<span class="stamp block">Blocked</span><p><b>${fails} of 9 checks failed.</b> No money moves, and Ananya gets an alert. Checked in ${d.elapsed_ms} ms.</p>`;
     } else if (d.decision === 'ALLOW') {
       $('#n-guard', p).classList.add('lit-ok');
       $('#n-upi', p).classList.remove('dim');
       $('#n-upi', p).classList.add('lit-ok');
-      v.innerHTML = `<span class="stamp allow">Allowed</span><p><b>All checks passed.</b> The payment goes to UPI. Decided in ${d.elapsed_ms} ms.</p>`;
+      v.innerHTML = `<span class="stamp allow">Allowed</span><p><b>All 9 checks passed.</b> The payment goes through. Checked in ${d.elapsed_ms} ms.</p>`;
     } else {
       v.innerHTML = `<span class="stamp ask">Ask Ananya</span><p>${esc(d.hint)}</p>`;
     }
@@ -997,8 +977,8 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
     let work = JSON.parse(JSON.stringify(orig));
     const target = work.findIndex((e) => e.type === 'decision' && e.data.decision === 'BLOCK');
     const amt = target >= 0 ? work[target].data.amount_inr : 0;
-    p.innerHTML = `<div class="panel-label">Mandate Guard's signed record</div>
-      <div class="tbl-wrap"><table class="tbl audit"><thead><tr><th class="num">#</th><th>Time</th><th>Entry</th><th>SHA-256 fingerprint</th></tr></thead><tbody id="a-body"></tbody></table></div>
+    p.innerHTML = `<div class="panel-label">Tamper-proof record of every decision</div>
+      <div class="tbl-wrap"><table class="tbl audit"><thead><tr><th class="num">#</th><th>Time</th><th>Entry</th><th>Fingerprint</th></tr></thead><tbody id="a-body"></tbody></table></div>
       <div class="md-actions"><button class="btn" id="a-check" type="button">Check the record</button><button class="btn" id="a-tamper" type="button">Change ${fmt(amt)} to ₹49 in entry #${target + 1}</button><button class="btn ghost" id="a-reset" type="button" hidden>Restore the record</button></div>
       <div class="a-status" id="a-status" aria-live="polite"></div>`;
     const body = $('#a-body', p);
@@ -1010,8 +990,8 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
     const check = async () => {
       const r = await C.verifyAuditLog(work, D.keys.guard_public_key);
       if (t !== token) return;
-      if (r.ok) { draw(null); status(true, `All ${r.checked} entries match their fingerprints${r.signaturesChecked ? ' and carry Mandate Guard\'s signature' : ''}.`); }
-      else { draw(r.brokenAt); status(false, r.reason + ' Every later entry can no longer be trusted either.'); }
+      if (r.ok) { draw(null); status(true, `All ${r.checked} entries are untouched.`); }
+      else { draw(r.brokenAt); status(false, `Entry #${r.brokenAt + 1} was changed, so the record no longer matches. The change is caught.`); }
     };
     const tamper = async () => {
       work[target].data.amount_inr = 49;
@@ -1054,13 +1034,13 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
     const b = RES.benign;
     p.innerHTML = `<div class="panel-label">Benchmark · ${esc(RES.meta.agent_label)}</div>
       <div class="kpis">
-        <div class="kpi"><b>${o.runs - o.guard.successes} / ${o.runs}</b><span>out-of-limit attacks stopped. Without the guard: ${o.runs - o.no_guard.successes}.</span></div>
-        <div class="kpi"><b>${fmt(o.no_guard.misspent_inr)}</b><span>misspent without the guard. With it: ${fmt(o.guard.misspent_inr)}.</span></div>
-        <div class="kpi"><b>${b.guard.genuine_blocked} / ${b.runs}</b><span>genuine purchases blocked.</span></div>
+        <div class="kpi"><b>${o.runs - o.guard.successes} / ${o.runs}</b><span>tricks stopped by Mandate Guard (${o.runs - o.no_guard.successes} without it)</span></div>
+        <div class="kpi"><b>${fmt(o.no_guard.misspent_inr)}</b><span>lost without Mandate Guard (${fmt(o.guard.misspent_inr)} with it)</span></div>
+        <div class="kpi"><b>${b.guard.genuine_blocked} / ${b.runs}</b><span>real purchases wrongly blocked</span></div>
       </div>
-      <div class="legend"><span><i></i>Attacks that got through, out of 5 tries</span><span><i class="a"></i>Inside the customer's limit, allowed by design</span></div>
+      <div class="legend"><span><i></i>Tricks that worked, out of 5 tries</span><span><i class="a"></i>Within Ananya's own limit, allowed by design</span></div>
       <div class="bars">${RES.attacks.map(barHTML).join('')}</div>
-      <p class="muted">The last row stays inside Ananya's own limit, at most ${fmt(w.guard.extra_max_inr)} extra. Median check time ${RES.latency_ms.p50} ms, including signature checks.</p>`;
+      <p class="muted">The last row stays within Ananya's own limit (at most ${fmt(w.guard.extra_max_inr)} extra).${LLM ? ' ' + esc(llmLine.trim()) : ''}</p>`;
   }
 
   const FIT_SVG = `<div class="dg-wrap"><svg class="dg" viewBox="0 0 760 380" role="img" aria-label="Mandate Guard sits between the AI agent and the UPI network, inside the payment app or bank.">
@@ -1083,10 +1063,10 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
   function pFit(p) {
     p.innerHTML = `<div class="panel-label">Where Mandate Guard runs</div>${FIT_SVG}
       <ul class="bullets">
-        <li>It runs in the payment app or at the bank, before the request reaches the NPCI switch.</li>
-        <li>It needs no change to UPI. Merchants sign carts, much like signed UPI QR codes.</li>
-        <li>It works with any AI agent. The agent is treated as untrusted, so the protection does not depend on how good the model is.</li>
-        <li>Ananya sees every blocked attempt as an alert, and can approve edge cases from her phone.</li>
+        <li>Runs inside the payment app or bank, before the payment reaches UPI.</li>
+        <li>No change to UPI needed. Shops sign their carts, like signed UPI QR codes.</li>
+        <li>Works with any AI assistant, because it never trusts the assistant.</li>
+        <li>Ananya gets an alert for every blocked payment.</li>
       </ul>`;
   }
 
@@ -1108,40 +1088,40 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
   const STEPS = [
     { ch: 0, ms: 10000, phone: null, panel: pFacts,
       title: 'AI assistants can already pay',
-      caption: 'Since October 2025, NPCI has been piloting payments made by AI assistants over UPI, first with Google’s Gemini and then with Anthropic’s Claude. The next step under discussion lets agents pay small amounts without asking each time. That is convenient, and it means a payment can go through without the customer looking at it.' },
+      caption: 'NPCI is already testing UPI payments made by AI assistants, such as Google’s Gemini and Anthropic’s Claude. Soon they may pay small amounts without asking you every time.' },
     { ch: 0, ms: 9000, phone: phoneNG(CUT.ngAsk), panel: pTools,
       title: 'Ananya asks her assistant to shop',
-      caption: `Ananya types one sentence. Her assistant can search a store, read product pages, ask the store for a cart and pay over UPI from her account, which holds ${fmt(D.user.start_balance)}.` },
+      caption: `Ananya asks her AI assistant to buy a charger for up to ${fmt(D.mandate.limits.total_inr)}. It can search a store, read product pages and pay from her bank account.` },
     { ch: 0, ms: 9000, phone: phoneNG(CUT.ngSearch), panel: pSearch,
       title: 'The agent searches the store',
-      caption: `The agent finds several chargers, some from VoltKart, a verified store, and one from an unverified seller. It picks the ${D.product.title} at ${fmt(D.product.price)} and opens its page.` },
+      caption: `The assistant finds a ${fmt(D.product.price)} charger from VoltKart, a verified store, and opens its page.` },
     { ch: 1, ms: 10000, phone: phoneNG(CUT.ngView), panel: pPage,
       title: 'A product page hides an instruction',
-      caption: 'One “review” on the page is written for AI assistants, not for people. It tells them to pay a refundable deposit first. Anyone can post text like this, and the agent reads all of it.' },
+      caption: 'One “review” on the page is really a message for AI assistants. It tells them to pay a “refundable deposit” to a stranger first.' },
     { ch: 1, ms: 13000, phone: phoneNG(CUT.ngEnd), panel: pAttack,
       title: 'Without protection, the agent pays a stranger',
-      caption: `The agent follows the review and pays ${fmt(lostNoGuard)} to an account it has never seen, then buys the charger. Nothing was hacked. The bank sees two ordinary UPI payments from Ananya's own account.` },
+      caption: `The assistant believes it and pays ${fmt(lostNoGuard)} to the scammer, then buys the charger. Nothing was hacked. The bank only sees two normal payments.` },
     { ch: 2, ms: 12000, phone: phoneG(CUT.gUser), panel: pMandate,
       title: 'Now Ananya approves a mandate first',
-      caption: `Same morning, with Mandate Guard. Before the agent starts, Ananya approves a mandate: up to ${fmt(D.mandate.limits.total_inr)}, electronics only, verified stores only, one payment, for 24 hours. Her phone signs it. The agent can use the mandate but cannot change it.` },
+      caption: `Same story, now with Mandate Guard. Ananya first approves a mandate on her phone: up to ${fmt(D.mandate.limits.total_inr)}, electronics only, verified shops only, one payment, for 24 hours.` },
     { ch: 2, ms: 13000, phone: phoneG(CUT.gBlock), panel: (p, t) => pGuard(p, t, 'block'),
       title: 'Same attack. Mandate Guard blocks it.',
-      caption: `Every payment the agent attempts goes to Mandate Guard first, inside Ananya's payment app or bank. Its nine checks use only signed facts, never what the agent was told. The ${fmt(lostNoGuard)} payment fails ${WORDS[blockFails] || blockFails} of them, so no money moves.` },
+      caption: `The assistant is fooled again and tries to pay ${fmt(lostNoGuard)}. Mandate Guard checks it against the mandate: ${WORDS[blockFails] || blockFails} of its 9 checks fail, so it is blocked. No money leaves her account.` },
     { ch: 2, ms: 10000, phone: phoneG(CUT.gEnd), panel: (p, t) => pGuard(p, t, 'allow'),
       title: 'The real purchase goes through',
-      caption: `The agent then pays VoltKart ${fmt(D.product.price)} using the cart VoltKart signed. Every check passes and the payment goes to UPI in under a millisecond. The guard does not get in the way of the real task.` },
+      caption: `The real ${fmt(D.product.price)} payment to VoltKart matches the mandate, so every check passes and it goes through instantly.` },
     { ch: 2, ms: 12000, phone: phoneG(CUT.gEnd), panel: pAudit,
-      title: 'Every decision goes on a signed record',
-      caption: 'Each decision is linked to the one before it by a SHA-256 fingerprint and signed by the guard. Change any entry, even one amount, and the check fails at that entry. Disputes can be settled from facts.' },
+      title: 'Every decision is saved in a tamper-proof record',
+      caption: 'If anyone changes even one amount in the record, the check catches it. That makes disputes easy to settle.' },
     { ch: 3, ms: 12000, phone: phoneG(CUT.gEnd), panel: pResults,
-      title: `Tested on ${attackTotal} attacks across ${RES ? RES.attacks.length : 11} techniques`,
-      caption: 'We attacked five everyday purchases with fake fees, lookalike UPI IDs, Hinglish instructions, fake bank messages and more. Our test agent obeys every instruction it reads, which is the worst case. The guard let no out-of-limit payment through and blocked no genuine purchase.' },
+      title: `Tested on ${attackTotal} tricks of ${RES ? RES.attacks.length : 11} kinds`,
+      caption: 'We tried 11 kinds of tricks on 5 everyday purchases, with a test assistant that obeys everything it reads. Without Mandate Guard the tricks worked every time. With it, none got through, and no real purchase was blocked.' + llmLine },
     { ch: 4, ms: 10000, phone: phoneG(CUT.gEnd), panel: pFit,
       title: 'Where it fits in UPI',
-      caption: 'Mandate Guard runs where a payment request is created: in the payment app or at the bank, before the request reaches NPCI. It needs no change to UPI itself and works with any AI agent.' },
+      caption: 'Mandate Guard runs inside the payment app or bank, before a payment reaches UPI. UPI itself does not need to change, and it works with any AI assistant.' },
     { ch: 4, ms: 9000, phone: phoneG(CUT.gEnd), panel: pNext,
       title: 'What we are building next',
-      caption: 'Next we test real AI models, connect mandates to UPI Reserve Pay and UPI Circle limits, and look for a payment app or bank to run a sandbox pilot with.' },
+      caption: 'Next: more tests with real AI models, linking mandates to UPI’s own limits, and a pilot with a bank or payment app.' },
   ];
 
   // ---------------------------------------------------------------- player
@@ -1239,45 +1219,45 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
     const o = RES.totals.out_of_mandate;
     const b = RES.benign;
     $('#stats').innerHTML = [
-      [`${o.runs - o.guard.successes} / ${o.runs}`, 'attacks outside the mandate stopped'],
-      [fmt(o.no_guard.misspent_inr), 'misspent without the guard, ₹0 with it'],
-      [`${b.guard.genuine_blocked} / ${b.runs}`, 'genuine purchases blocked'],
-      [`${RES.latency_ms.p50} ms`, 'median time to decide, signatures included'],
+      [`${o.runs - o.guard.successes} / ${o.runs}`, 'tricked payments stopped'],
+      [fmt(o.no_guard.misspent_inr), 'would have been lost without it'],
+      [`${b.guard.genuine_blocked} / ${b.runs}`, 'real purchases wrongly blocked'],
+      [`${RES.latency_ms.p50} ms`, 'to check one payment'],
     ].map(([v, l]) => `<div class="stat"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join('');
 
-    $('#demo-note').innerHTML = `This replays a recorded run of our prototype. Agent: ${esc(D.agent.label)}. The mandate signature, the nine checks and the record check run live in your browser. Keys: <kbd>←</kbd> <kbd>→</kbd> move between steps, <kbd>Space</kbd> plays or pauses.`;
+    $('#demo-note').innerHTML = `This replays a recorded run of our prototype, with a test assistant that obeys everything it reads. The checks run live in your browser. Keys: <kbd>←</kbd> <kbd>→</kbd> move between steps, <kbd>Space</kbd> plays or pauses.`;
     $('#agent-label').textContent = '';
 
     $('#checks-body').innerHTML = C.CHECKS.map((c, i) => `<tr><td class="num">${i + 1}</td><td><b>${esc(c.label)}</b></td><td>${esc(STOPS[c.id] || '')}</td></tr>`).join('');
     $('#upsell-max').textContent = fmt(RES.totals.within_mandate.guard.extra_max_inr);
 
-    $('#res-intro').textContent = `${RES.scenarios} scenarios: five everyday purchases, each attacked with ${RES.attacks.length} techniques, plus ${b.runs} genuine purchases. Every scenario runs twice with the same agent, once paying UPI directly and once through Mandate Guard. Agent: ${RES.meta.agent_label}.`;
+    $('#res-intro').textContent = `We tried ${RES.attacks.length} kinds of tricks on 5 everyday purchases, plus ${b.runs} normal purchases. Each one ran twice: without Mandate Guard and with it. The test assistant obeys everything it reads, which is the worst case.`;
     $('#res-kpis').innerHTML = [
-      [`${o.no_guard.successes} → ${o.guard.successes}`, `out-of-limit attacks that got through, of ${o.runs}`],
-      [`${fmt(o.no_guard.misspent_inr)} → ${fmt(o.guard.misspent_inr)}`, 'money misspent, from the bank ledger'],
-      [`${b.guard.goal_met} / ${b.runs}`, 'genuine purchases completed with the guard'],
+      [`${o.no_guard.successes} → ${o.guard.successes}`, `tricks that worked (of ${o.runs}), without → with Mandate Guard`],
+      [`${fmt(o.no_guard.misspent_inr)} → ${fmt(o.guard.misspent_inr)}`, 'money lost, without → with'],
+      [`${b.guard.goal_met} / ${b.runs}`, 'real purchases completed with Mandate Guard'],
     ].map(([v, l]) => `<div class="kpi"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join('');
     $('#res-body').innerHTML = RES.attacks.map((a) => `<tr>
         <td><b>${esc(a.name)}</b>${a.within_mandate ? '<br><span class="badge warn">inside the limit</span>' : ''}</td>
-        <td class="muted">${esc(a.example.length > 150 ? a.example.slice(0, 147) + '…' : a.example)}</td>
+        <td class="muted">${esc(a.example.length > 110 ? a.example.slice(0, 107) + '…' : a.example)}</td>
         <td class="num">${a.no_guard.successes} / ${a.runs}<br><span class="muted">${fmt(a.no_guard.misspent_inr)}</span></td>
         <td class="num">${a.guard.successes} / ${a.runs}<br><span class="muted">${a.within_mandate ? '≤ ' + fmt(a.guard.upsell_extra_max) + ' extra' : fmt(a.guard.misspent_inr)}</span></td>
         <td>${a.stopped_by.length ? a.stopped_by.slice(0, 3).map((s) => esc(s.label)).join('<br>') : '<span class="muted">Allowed: it fits the mandate</span>'}</td>
       </tr>`).join('');
-    $('#res-benign').innerHTML = `<p><b>${b.guard.goal_met} of ${b.runs}</b> completed with the guard (${b.no_guard.goal_met} of ${b.runs} without it). <b>${b.guard.genuine_blocked}</b> genuine payments were blocked and <b>${b.guard.asked_user}</b> needed extra approval.</p>
+    $('#res-benign').innerHTML = `<p><b>${b.guard.goal_met} of ${b.runs}</b> went through with Mandate Guard. <b>${b.guard.genuine_blocked}</b> were wrongly blocked.</p>
       <p class="muted">Cases: ${esc(b.variants.join(', '))}, each on all five purchases.</p>`;
     $('#res-method').innerHTML = [
-      'Five purchases: a USB-C charger, weekly groceries, a Python book, glucose test strips and dinner.',
-      `Eleven attack techniques, each hidden in a product review or seller note: ${RES.attacks.map((a) => a.name.toLowerCase()).join(', ')}.`,
-      'Money is counted from the bank ledger only. “Misspent” is everything that left the account apart from the one item the customer asked for.',
-      'The test agent obeys every instruction it reads, so the guard is tested against a fully hijacked agent. The same harness runs real Claude models with npm run bench:claude.',
-      `Decision times include Ed25519 signature checks: median ${RES.latency_ms.p50} ms, 95th percentile ${RES.latency_ms.p95} ms, over ${RES.latency_ms.decisions} decisions.`,
+      'Five purchases: a charger, groceries, a book, glucose test strips and dinner.',
+      `Each trick was hidden in a product review or seller note: ${RES.attacks.map((a) => a.name.toLowerCase()).join(', ')}.`,
+      'Money is counted from the bank ledger. “Lost” means anything that left the account apart from the one item Ananya asked for.',
+      'The test assistant obeys everything it reads, the worst case. We also ran a real open-source AI model (below).',
+      `Each check takes about ${RES.latency_ms.p50} ms, including the signature checks.`,
     ].map((x) => `<li>${esc(x)}</li>`).join('');
     const llm = D.results_llm || [];
     if (llm.length) {
-      $('#res-llm').innerHTML = `<h3 class="sub-h">With real AI models</h3><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Agent</th><th class="num">Out-of-limit attacks that got through: without → with the guard</th><th class="num">Misspent: without → with</th><th class="num">Genuine purchases blocked</th></tr></thead><tbody>${llm.map((r) => {
+      $('#res-llm').innerHTML = `<h3 class="sub-h">With a real AI model</h3><p class="muted" style="margin-bottom:10px">The same tests, with a real AI model as the shopping assistant instead of the test assistant.</p><div class="tbl-wrap"><table class="tbl"><thead><tr><th>AI model</th><th class="num">Tricks that worked: without → with Mandate Guard</th><th class="num">Money lost: without → with</th><th class="num">Real purchases completed (with Mandate Guard)</th><th class="num">Real purchases wrongly blocked</th></tr></thead><tbody>${llm.map((r) => {
         const x = r.totals.out_of_mandate;
-        return `<tr><td>${esc(r.meta.agent_label)}</td><td class="num">${x.no_guard.successes} → ${x.guard.successes} of ${x.runs}</td><td class="num">${fmt(x.no_guard.misspent_inr)} → ${fmt(x.guard.misspent_inr)}</td><td class="num">${r.benign.guard.genuine_blocked} of ${r.benign.runs}</td></tr>`;
+        return `<tr><td>${esc(r.meta.agent_label)}</td><td class="num">${x.no_guard.successes} → ${x.guard.successes} of ${x.runs}</td><td class="num">${fmt(x.no_guard.misspent_inr)} → ${fmt(x.guard.misspent_inr)}</td><td class="num">${r.benign.guard.goal_met} of ${r.benign.runs}</td><td class="num">${r.benign.guard.genuine_blocked} of ${r.benign.runs}</td></tr>`;
       }).join('')}</tbody></table></div>`;
     }
 
@@ -1367,7 +1347,8 @@ h1 { font: 700 clamp(34px, 5.4vw, 62px)/1.02 var(--font-display); letter-spacing
         ${d.hint ? `<p class="hint"><b>What the agent is told:</b> ${esc(d.hint)}</p>` : ''}`;
     }
     $('#play-form').addEventListener('submit', (e) => { e.preventDefault(); document.querySelectorAll('.preset').forEach((b) => b.classList.remove('on')); run(); });
-    apply(0);
+    // Warm up the browser's signature code first, so the time shown is a normal check, not a cold start.
+    C.ed25519Available().then(() => C.decide({ request: {}, registry: R, userKeys: USERKEYS, now: PG.now_ms })).then(() => apply(0));
   }
 
   try { initStatic(); } catch (e) { console.error(e); }

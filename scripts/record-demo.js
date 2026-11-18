@@ -53,7 +53,7 @@ async function main() {
     return agg;
   };
   const llm = fs.existsSync(path.join(root, 'results'))
-    ? fs.readdirSync(path.join(root, 'results')).filter((f) => /^benchmark-claude.*\.json$/.test(f)).map(readResults)
+    ? fs.readdirSync(path.join(root, 'results')).filter((f) => /^benchmark-.*\.json$/.test(f) && f !== 'benchmark-worstcase.json').map(readResults)
     : [];
 
   const data = {
