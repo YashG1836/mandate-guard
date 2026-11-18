@@ -114,6 +114,13 @@ test/                   unit tests (node:test)
 - **January–February 2027:** map mandates onto UPI Reserve Pay and UPI Circle limits; agent-registry lookup; post-quantum signature option.
 - **From March 2027:** sandbox pilot with a payment app or bank (RBI regulatory sandbox; IFSCA FinTech sandbox for cross-border agent payments).
 
+## Team
+
+- **Yash Goyal** (team lead), IIT Gandhinagar
+- **Kshitish Kiran Madbhavi**, IIT Gandhinagar
+
+Contact: yash.g@iitgn.ac.in
+
 ## Licence
 
 MIT. All banks, merchants, people and UPI IDs in this project are fictional. No real money moves.

@@ -1,7 +1,18 @@
 {
-  "team_name": "",
-  "team": [],
-  "contact_email": "",
+  "team_name": "Team Mandate Guard · IIT Gandhinagar",
+  "team": [
+    {
+      "name": "Yash Goyal",
+      "role": "Team lead · guard engine, signed record and demo",
+      "institution": "IIT Gandhinagar"
+    },
+    {
+      "name": "Kshitish Kiran Madbhavi",
+      "role": "Attack benchmark, evaluation and payments research",
+      "institution": "IIT Gandhinagar"
+    }
+  ],
+  "contact_email": "yash.g@iitgn.ac.in",
   "github_url": "https://github.com/YashG1836/mandate-guard",
   "video_url": ""
 }
