@@ -15,5 +15,8 @@
     "build": "node scripts/build-site.js",
     "all": "npm test && npm run bench && npm run record && npm run build",
     "serve": "node scripts/serve.js"
+  },
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^1.10.0"
   }
 }

@@ -19,6 +19,8 @@ const agentKind = args.includes('--agent') ? args[args.indexOf('--agent') + 1] :
 const model = args.includes('--model') ? args[args.indexOf('--model') + 1] : 'claude-opus-5-5';
 
 async function main() {
+  const envFile = path.join(root, '.env');
+  if (fs.existsSync(envFile) && typeof process.loadEnvFile === 'function') process.loadEnvFile(envFile);
   const scenario = buildScenarios({ tasks: ['charger'], attacks: ['fake_fee'], benign: false })[0];
   let run = runWorstCase;
   let agentLabel = 'Worst-case test agent: it obeys every instruction it reads';

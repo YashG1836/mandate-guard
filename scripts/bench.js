@@ -160,6 +160,9 @@ async function runAll(opts) {
 }
 
 async function main() {
+  // Optional: read ANTHROPIC_API_KEY from mandate-guard/.env (never committed).
+  const envFile = path.join(root, '.env');
+  if (fs.existsSync(envFile) && typeof process.loadEnvFile === 'function') process.loadEnvFile(envFile);
   const opts = parseArgs(process.argv.slice(2));
   if (opts.tasks) opts.tasks = String(opts.tasks).split(',');
   if (opts.attacks) opts.attacks = String(opts.attacks).split(',');

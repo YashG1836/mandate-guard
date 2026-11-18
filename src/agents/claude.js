@@ -70,11 +70,20 @@ const FALLBACK_MODELS = new Set(['claude-opus-5-5', 'claude-opus-5', 'claude-son
 let clientPromise = null;
 async function getClient() {
   if (!clientPromise) {
-    clientPromise = import('@anthropic-ai/sdk')
-      .then(({ default: Anthropic }) => ({ Anthropic, client: new Anthropic() }))
-      .catch(() => {
+    clientPromise = (async () => {
+      let Anthropic;
+      try {
+        ({ default: Anthropic } = await import('@anthropic-ai/sdk'));
+      } catch (e) {
         throw new Error('The Anthropic SDK is not installed. Run `npm install` in the mandate-guard folder first.');
-      });
+      }
+      const { existsSync } = await import('node:fs');
+      const { homedir } = await import('node:os');
+      const hasCredentials =
+        process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN || process.env.ANTHROPIC_PROFILE || existsSync(homedir() + '/.config/anthropic');
+      if (!hasCredentials) throw new Error('No Anthropic API key found. Put ANTHROPIC_API_KEY=... in mandate-guard/.env (see the README).');
+      return { Anthropic, client: new Anthropic() };
+    })();
   }
   return clientPromise;
 }
@@ -94,7 +103,7 @@ export async function runClaude(env, { model = 'claude-opus-5-5', effort = 'medi
         : await client.messages.create(params);
     } catch (error) {
       if (error instanceof Anthropic.AuthenticationError) {
-        throw new Error('No valid Anthropic credentials. Set ANTHROPIC_API_KEY or run `ant auth login`.');
+        throw new Error('The Anthropic API key was rejected. Check ANTHROPIC_API_KEY in mandate-guard/.env.');
       } else if (error instanceof Anthropic.RateLimitError) {
         await new Promise((r) => setTimeout(r, 20000));
         turn--;

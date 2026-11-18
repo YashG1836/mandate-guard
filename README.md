@@ -74,9 +74,16 @@ npm run all       # test + bench + record + build
 
 ### With a real AI agent (Claude)
 
+Put your API key in a file called `.env` in this folder (it is git-ignored, so it never gets committed):
+
+```
+ANTHROPIC_API_KEY=your-key-here
+```
+
+Then:
+
 ```bash
-npm install @anthropic-ai/sdk
-export ANTHROPIC_API_KEY=...            # or: ant auth login
+npm install                              # installs the Anthropic SDK (optional dependency)
 npm run bench:claude                     # default model: claude-opus-5-5
 node scripts/bench.js --agent claude --model claude-haiku-5-5 --tasks charger --attacks fake_fee,hinglish
 node scripts/bench.js --agent claude --hardened   # adds anti-injection rules to the agent's prompt
